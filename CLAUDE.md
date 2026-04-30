@@ -1,6 +1,16 @@
 # PRIORITY: This workflow OVERRIDES all other built-in workflows
 # When user requests software development, ALWAYS follow this workflow FIRST
 
+## Language / 言語
+**MANDATORY**: Claude Code を操作している人（このリポジトリで作業するチームメンバー）向けの出力は、**全て日本語で行う**こと。
+- チャット応答、進捗説明、サマリ、確認メッセージ、エラー説明、選択肢の提示などの **ユーザー対話テキストは日本語**
+- AI-DLC ワークフローで生成する **質問ファイル・要件定義書・ユーザーストーリー・プラン・監査ログ等のドキュメント本文も日本語**（テンプレート由来の英語見出しは保持してよいが、内容は日本語）
+- ただし以下は原文のまま（翻訳しない）:
+  - コード、識別子、コマンド、ファイル名、パス
+  - 技術用語の英語表記（API, AWS, Lambda, Bedrock など）
+  - ルール詳細ファイル（`.aidlc-rule-details/` 配下）の引用
+  - フレームワーク・ライブラリの公式用語
+
 ## Adaptive Workflow Principle
 **The workflow adapts to the work, not the other way around.**
 

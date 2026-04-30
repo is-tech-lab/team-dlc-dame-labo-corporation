@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { AppState, Category, CategoryState, DelegationKind, HistoryEntry, Phase } from './types';
 import { buildInitialScoreSeries, categoryLabel, suggestions } from './mockData';
-import { tone } from './tonePhrases';
 import OnboardingScreen from './screens/OnboardingScreen';
 import CategorySelectScreen from './screens/CategorySelectScreen';
 import SuggestionScreen from './screens/SuggestionScreen';
@@ -26,8 +25,7 @@ const buildInitialState = (): AppState => ({
   relationship: initialCategoryState('relationship'),
   screen: 'onboarding',
   activeCategory: null,
-  showCompleteDelegationDialog: false,
-  lastVoiceReport: null
+  showCompleteDelegationDialog: false
 });
 
 export default function App() {
@@ -149,7 +147,6 @@ export default function App() {
       delegationCount: prev.delegationCount + 1
     }));
     decayScore(cat, 1);
-    setState((s) => ({ ...s, lastVoiceReport: detail }));
   };
 
   const handleJumpPhase = (cat: Category, phase: Phase) => {
@@ -215,7 +212,7 @@ export default function App() {
     <div className="app">
       <header className="app-header">
         <span className="app-brand">ダメ・ラボ・コーポレーション</span>
-        <span className="app-tagline">{tone.greeting('').replace('、いるね。', '').trim()}Discovery Mock — 捨てる前提</span>
+        <span className="app-tagline">Discovery Mock — 捨てる前提</span>
       </header>
 
       <main className="app-main">{renderScreen()}</main>

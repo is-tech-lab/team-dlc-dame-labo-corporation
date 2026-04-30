@@ -1,12 +1,9 @@
 export const tone = {
   greeting: (name: string) => `${name}、いるね。`,
   afterSelection: 'ありがとう、おまえの好み覚えとくよ。',
-  afterPhase2Up: '進めといたよ、もう絞り込まれた選択肢だけ出すからね。',
   phase3VoicePrompt: 'これでいいですか？',
   afterPhase3Approve: 'うん、送っといた。',
   singleDelegation: '今回はおれが決めとく。',
-  phaseUpConfirm: '本当に次のフェーズに進める？絞り込まれた選択肢しか出さなくなるよ。',
-  phaseUpOk: '進めて',
   completeDelegationConfirm: '本当に？このカテゴリの判断、これからは全部おれがやるよ。',
   completeDelegationOk: 'うん、任せた',
   completeDelegationCancel: 'やっぱり考える',

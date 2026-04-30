@@ -50,7 +50,7 @@ export default function SuggestionScreen({
       <button className="back-link" onClick={onBack}>← カテゴリに戻る</button>
       <div className="suggestion-header">
         <span className="category-tag">{categoryLabel[category]}</span>
-        <PhaseBadge phase={phase} variant="pill" />
+        <PhaseBadge phase={phase} />
       </div>
       <PhaseDescription phase={phase} />
       <h2 className="suggestion-question">{question}</h2>

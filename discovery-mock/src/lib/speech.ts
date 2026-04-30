@@ -14,13 +14,18 @@ const ensureVoicesLoaded = (): Promise<void> => {
       resolve();
       return;
     }
+    let timer: ReturnType<typeof setTimeout> | null = null;
     const handler = () => {
       voicesReady = true;
       window.speechSynthesis.removeEventListener('voiceschanged', handler);
+      if (timer !== null) clearTimeout(timer);
       resolve();
     };
     window.speechSynthesis.addEventListener('voiceschanged', handler);
-    setTimeout(() => resolve(), 1000);
+    timer = setTimeout(() => {
+      window.speechSynthesis.removeEventListener('voiceschanged', handler);
+      resolve();
+    }, 1000);
   });
 };
 

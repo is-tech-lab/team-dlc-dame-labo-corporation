@@ -37,7 +37,7 @@ export default function Phase4Screen({ category, onAutoExecuted, onBack }: Props
       <button className="back-link" onClick={onBack}>← カテゴリに戻る</button>
       <div className="suggestion-header">
         <span className="category-tag">{categoryLabel[category]}</span>
-        <PhaseBadge phase={4} variant="pill" />
+        <PhaseBadge phase={4} />
       </div>
       <PhaseDescription phase={4} />
 

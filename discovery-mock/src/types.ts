@@ -44,5 +44,4 @@ export type AppState = {
   screen: ScreenName;
   activeCategory: Category | null;
   showCompleteDelegationDialog: boolean;
-  lastVoiceReport: string | null;
 };

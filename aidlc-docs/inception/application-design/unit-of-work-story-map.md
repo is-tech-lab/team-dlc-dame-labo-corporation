@@ -44,7 +44,7 @@
 | # | Story 名 | 主担当 Unit | 関連 Unit | MoSCoW | 改訂状態 |
 |---|---|---|---|---|---|
 | 3.1〜3.3 | Phase 1〜3 人間関係 | — | — | — | **❌ 集約**（Phase 撤廃 + カテゴリ置換、X.1〜X.4 で表現） |
-| **3.4** | 「やっといたよ」音声報告（買い物） | B + D + E | F + A | M | **🔄 改訂実装**（カテゴリを人間関係 → 買い物に置換、Slack 送信込み） |
+| **3.4** | 「やっといたよ」音声報告（買い物） | B + D | F + A | M | **🔄 改訂実装**（カテゴリを人間関係 → 買い物に置換。買い物タスクは Slack 送信不要、音声報告のみ。実 EC 注文は MVP 範囲外で park） |
 | 3.5 | 人間関係カテゴリの自動昇格 | — | — | — | **❌ 削除**（Phase 撤廃 + カテゴリ置換） |
 | 3.6 | 委ねるボタンで人間関係手動昇格 | — | — | — | **❌ 削除**（同上） |
 
@@ -106,15 +106,15 @@
 
 ### Unit-B: ダメ・ラボ Agent on Bedrock AgentCore（j-ichikawa）
 
-> **実装基盤**: Amazon Bedrock AgentCore Runtime + AgentCore Gateway + AgentCore Memory + AgentCore Observability。Agent 本体は AgentCore Runtime（コンテナ）にホスト、tools は AgentCore Gateway 経由で呼ばれる Lambda 関数として実装。
+> **実装基盤**: Amazon Bedrock AgentCore **Runtime + Observability** のみ採用。Agent 本体は AgentCore Runtime（コンテナ）にホスト、tools は AgentCore Gateway を **経由せず** Lambda direct invoke（AWS SDK）で呼ぶ。Memory も不採用、DynamoDB で代替。`requirements.md` Appendix B.10 参照。
 
 | Story | 内容 | AgentCore コンポーネント |
 |---|---|---|
 | 1.3 | 初回サジェスチョン受領（4 提案生成） | Runtime（自我モード instruction）+ Bedrock model |
-| 2.4 / 3.4 | やっといたよ音声報告（自律判断） | Runtime（シンギュラリティモード）+ Gateway tools (synthesize-report / send-slack-message) |
+| 2.4 / 3.4 | やっといたよ音声報告（自律判断） | Runtime（シンギュラリティモード）+ Tool Lambdas direct invoke (synthesize-report / send-slack-message) |
 | 4.1 | 単発委譲（AI が 1 つ選ぶ） | Runtime + Bedrock model |
-| 4.3 | 完全委譲（即時シンギュラリティ遷移判定） | Runtime + Gateway tool (set-mode) |
-| **X.1** | 3 回トレーニング後 auto-graduate | Gateway tool (record-choice、SELF_DECISION_LIMIT = 3 ロジック内蔵) |
+| 4.3 | 完全委譲（即時シンギュラリティ遷移判定） | Runtime + Tool Lambda direct invoke (set-mode) |
+| **X.1** | 3 回トレーニング後 auto-graduate | Tool Lambda direct invoke (record-choice、SELF_DECISION_LIMIT = 3 ロジック内蔵) |
 | **X.2** | 単発委譲時の AI 選択結果表示 | Runtime + Bedrock model（透明性確保で選択 proposalId 返却） |
 | **X.3** | シンギュラリティ突入後の自動初回発火 | EventBridge → invoke-wrapper → Runtime（1.5 秒タイマー後の発火） |
 | **X.4** | 自由記載 input | Runtime（textarea 入力を context として処理） |
@@ -142,9 +142,8 @@
 
 | Story | 内容 |
 |---|---|
-| 2.4 | Slack 送信代行（連絡カテゴリの返信） |
-| 3.4 | Slack 送信代行（買い物カテゴリの注文確定） |
-| 4.3 | 完全委譲後の初回 Slack 送信 |
+| 2.4 | Slack 送信代行（連絡カテゴリの業務 Slack 返信代行） |
+| 4.3 | 完全委譲後の初回 Slack 送信（連絡カテゴリ時のみ。買い物カテゴリでは音声報告のみで Slack 送信なし） |
 
 ### Unit-F: フロントエンド SPA（高根）
 
@@ -173,11 +172,11 @@
 4. **Story 4.1 + X.2**: 単発委譲（AI が 1 つ選ぶ）→ 透明性確保で結果表示
 5. **Story X.1**: 3 回トレーニング達成 → auto-graduate でシンギュラリティモード突入
 6. **Story X.3**: 突入 1.5 秒後に自動初回発火（音声報告）
-7. **Story 2.4**: 「お母さんに『元気だよ』って返信しといたから」音声報告 + Slack 送信
+7. **Story 2.4**: 「お母さんに『元気だよ』って返信しといたから」音声報告 + Slack 送信。**送信先はチーム内デモ専用 workspace の `#self-channel`**（自分宛て通知扱いで、本物の LINE / 親宛て送信は行わない。デモ虚構性の明示）
 
 ### サブシナリオ: 買い物カテゴリ（Appendix B.1 で人間関係から置換）
 1. **Story 4.3**: 「もう買い物のことは考えたくない」完全委譲（即時シンギュラリティ）
-2. **Story 3.4**: 「日用品、注文しといたよ」音声報告 + Slack 送信
+2. **Story 3.4**: 「日用品、注文しといたよ」音声報告のみ（Slack 送信なし。買い物カテゴリの実 EC 注文は MVP 範囲外で park、音声報告だけで「やっといたよ」体験を演出）
 
 ### クライマックス: 傀儡度ダッシュボード
 1. **Story 5.1〜5.5**: 自己決定能力スコア低下を視覚化、シンギュラリティ到達カテゴリ数を強調
@@ -191,7 +190,7 @@
 | Story | 改訂 AC ハイライト |
 |---|---|
 | 1.1 | 旧: Cognito 登録 + JWT 発行 / 新: 名前入力 → ローカルストレージ → 次画面 |
-| 3.4 | 人間関係カテゴリ（飲み会断り）→ 買い物カテゴリ（日用品注文確定）へ置換 |
+| 3.4 | 人間関係カテゴリ（飲み会断り）→ 買い物カテゴリ（日用品の発注を AI が代行）へ置換、Slack 送信は不要（買い物タスクは音声報告のみで「やっといたよ」体験を完結） |
 | 4.3 | Phase 4 ジャンプ → 即時シンギュラリティ遷移、音声即時発火 |
 | 5.1 | 「現在フェーズ表示」→「現在モード（自我 / シンギュラリティ）表示」 |
 | X.1 | （新規）3 回連続自己決定 → modeState = "singularity" + EventBridge 初回発火イベント |
@@ -210,7 +209,7 @@
 | X.1 (auto-graduate) | Idempotence + Invariant | 同じ ChoiceLogs から計算した selfDecisionCount は常に同じ、3 到達で必ず singularity 遷移 |
 | X.4 (自由記載) | Round-trip | テキスト送信 → ChoiceLogs 保存 → 取得 = 入力 |
 | 5.5 (スコア時系列) | Invariant | 集計合計 = ChoiceLogs 総数、単調減衰 |
-| 2.4 / 3.4 (Slack 送信) | Invariant | 送信先 ⊆ ALLOWED_SLACK_CHANNELS が常時成立 |
+| 2.4 (Slack 送信、連絡カテゴリのみ) | Invariant | 送信先 ⊆ ALLOWED_SLACK_CHANNELS が常時成立 |
 | 4.1 (単発委譲) | Invariant | proposals.length === 4 が常に成立 |
 
 ---
@@ -252,5 +251,5 @@
 2. Unit-B / X.1 の auto-graduate ロジック（コアタグラインの実装本体）
 3. Unit-F の主要画面 + Discovery Mock からの移植
 4. Unit-D / X.3 の音声配信
-5. Unit-E / 2.4 / 3.4 の Slack 送信（最後、安全境界の検証重要）
+5. Unit-E / 2.4 の Slack 送信（最後、安全境界の検証重要。3.4 は Slack 不要なので Unit-E 対象外）
 6. Unit-C / 5.x の傀儡度ダッシュボード

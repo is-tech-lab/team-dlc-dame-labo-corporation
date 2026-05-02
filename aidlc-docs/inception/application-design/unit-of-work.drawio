@@ -103,7 +103,7 @@
         <mxCell id="unit-b" parent="1" style="swimlane;startSize=40;fillColor=#f8cecc;strokeColor=#c53030;fontSize=13;fontStyle=1;rounded=1;" value="Unit-B: ダメ・ラボ Agent (j-ichikawa)" vertex="1">
           <mxGeometry height="180" width="260" x="380" y="520" as="geometry" />
         </mxCell>
-        <mxCell id="unit-b-bedrock" parent="unit-b" style="rounded=1;fillColor=#fde0d0;strokeColor=#c53030;whiteSpace=wrap;fontSize=10;" value="Bedrock Agent&#xa;(Claude)" vertex="1">
+        <mxCell id="unit-b-bedrock" parent="unit-b" style="rounded=1;fillColor=#fde0d0;strokeColor=#c53030;whiteSpace=wrap;fontSize=9;" value="Bedrock AgentCore&#xa;Runtime (GA) + Observability&#xa;+ Bedrock Claude" vertex="1">
           <mxGeometry height="40" width="220" x="20" y="50" as="geometry" />
         </mxCell>
         <mxCell id="unit-b-mode" parent="unit-b" style="rounded=1;fillColor=#fde0d0;strokeColor=#c53030;whiteSpace=wrap;fontSize=10;" value="Mode-aware&#xa;自我 / シンギュラリティ" vertex="1">

@@ -42,7 +42,7 @@
 - [x] Application Design — completed 2026-05-02（approved by チーム代表 高木皇佑）
 - [x] Units Generation — completed 2026-05-03（approved by チーム代表 高木皇佑、別セッションでレビュー待ち）
 
-### CONSTRUCTION PHASE（5 Unit × Per-Unit Loop）
+### CONSTRUCTION PHASE（6 Unit × Per-Unit Loop。A 共通基盤・インフラ / B Agent / C 傀儡度 BE / D 音声 UI BE / E 外部送信 / F フロントエンド SPA）
 - [ ] Functional Design — EXECUTE（per-unit、PBT-01 適用）
 - [ ] NFR Requirements — EXECUTE（per-unit、PBT-09 適用）
 - [ ] NFR Design — EXECUTE（per-unit）

@@ -70,9 +70,9 @@
 
 ---
 
-### Unit-B: ダメ・ラボ Agent（**Bedrock AgentCore 上に実装**）
+### Unit-B: ダメ・ラボ Agent（**Bedrock AgentCore Runtime + Observability**）
 
-**Purpose**: 単一の AI エージェントとして、自我モード / シンギュラリティモードを切り替えて動作する MVP の AI 中核。**Amazon Bedrock AgentCore Runtime 上に Agent を host し、AgentCore Gateway 経由で tools (Lambda) を呼び出す構成**。
+**Purpose**: 単一の AI エージェントとして、自我モード / シンギュラリティモードを切り替えて動作する MVP の AI 中核。**Amazon Bedrock AgentCore Runtime 上に Agent を host し、AgentCore Observability で全 step を可視化する構成**。tools は AgentCore Gateway を経由せず Lambda direct invoke（AWS SDK）で呼ぶ（1 Agent + tool 数 4-6 個ではオーバーヘッド回避が合理的、`requirements.md` Appendix B.10 参照）。
 
 **主担当**: j-ichikawa（AI/ML、Bedrock AgentCore 統合）
 
@@ -108,19 +108,19 @@
 - **AgentCore Runtime**: Agent 本体（システムプロンプト + mode 切替ロジック + Bedrock model 推論）
   - **自我モード**: 4 提案 + 自由記載枠生成
   - **シンギュラリティモード**: 自律判断 → tool 呼出 → 音声報告テキスト生成
-  - **mode 切替**: AgentCore Memory に格納された CategoryStates から判定
-- **AgentCore Gateway tools**（Lambda 関数として実装、Agent から呼ばれる）:
+  - **mode 切替**: DynamoDB `CategoryStates` から判定（AgentCore Memory は不採用、DynamoDB で代替、`requirements.md` Appendix B.10 参照）
+- **Tool Lambdas**（AgentCore Gateway を経由せず、Agent runtime から AWS SDK で direct invoke）:
   - `record-choice`: DynamoDB ChoiceLogs 書込 + `SELF_DECISION_LIMIT = 3` 判定 + auto-graduate
   - `set-mode`: CategoryStates の modeState 更新
-  - `query-category-state`: CategoryStates 取得（AgentCore Memory と整合）
+  - `query-category-state`: CategoryStates 取得
   - `invoke-singularity-action`: シンギュラリティモード実行のトリガ（音声 UI / 外部送信 への委譲）
-- **AgentCore Memory**: カテゴリ単位の文脈・履歴を session として保持
 - **API Gateway 経由のフロント連携**: AgentCore InvokeAgent API のラッパ Lambda（薄い）
+- **AgentCore Observability**: Agent runtime の全 step を自動収集 → CloudWatch / X-Ray にエクスポート、Replay / Compare で prompt iteration を高速化
 
 **Interfaces**:
 - 入力: REST API 経由のユーザーメッセージ → InvokeAgent ラッパ Lambda → AgentCore Runtime
 - 出力: AgentCore Runtime の応答（提案リスト or 音声報告テキスト）→ ラッパ Lambda → フロント
-- 依存先: Unit-A（DynamoDB / API GW / Lambda Common Layer）、Unit-D（Polly 呼出 = AgentCore Gateway tool）、Unit-E（Slack 送信 = AgentCore Gateway tool）
+- 依存先: Unit-A（DynamoDB / API GW / Lambda Common Layer）、Unit-D（Polly 呼出 = Lambda direct invoke）、Unit-E（Slack 送信 = Lambda direct invoke）
 
 **所有 Story**: 1.3 / 2.1〜2.3（X.1〜X.4 に集約） / 4.1 / 4.3 / X.1 / X.2 / X.3 / X.4
 
@@ -209,7 +209,7 @@ const ALLOWED_SLACK_CHANNELS = ["C0XXXXX", "C0YYYYY"];
 - LINE Messaging API / SES（メール）— `TODO_construction.md` で park
 - 認証基盤 — MVP 撤廃済
 
-**所有 Story**: 2.4 / 3.4（音声報告 + Slack 送信のセット）
+**所有 Story**: 2.4（連絡カテゴリの業務 Slack 返信代行）。3.4（買い物）は Slack 送信不要（音声報告のみで完結、Unit-D 所有）。
 
 ---
 
@@ -259,7 +259,7 @@ team-dlc-dame-labo-corporation/
 │   │   │   ├── api-gateway-stack.ts
 │   │   │   ├── dynamodb-stack.ts
 │   │   │   ├── eventbridge-stack.ts
-│   │   │   ├── agentcore-stack.ts      # AgentCore Runtime/Memory/Gateway デプロイ
+│   │   │   ├── agentcore-stack.ts      # AgentCore Runtime + Observability デプロイ
 │   │   │   └── iam-stack.ts
 │   │   ├── lambda/
 │   │   │   └── common-layer/           # Lambda Layer 共通コード
@@ -274,17 +274,15 @@ team-dlc-dame-labo-corporation/
 │   │   │   │   │   ├── ego-mode.ts       # 自我モード instruction
 │   │   │   │   │   └── singularity-mode.ts  # シンギュラリティモード instruction
 │   │   │   │   ├── mode-router.ts      # 自我 / シンギュラリティ切替ロジック
-│   │   │   │   └── tools-schema.ts     # AgentCore Gateway tools 宣言
+│   │   │   │   └── tools-invoker.ts    # Tool Lambda direct invoke ヘルパ
 │   │   │   ├── Dockerfile              # AgentCore Runtime container
 │   │   │   ├── package.json
 │   │   │   └── README.md               # ローカル実行手順
-│   │   ├── tools/                      # AgentCore Gateway tools（Agent から呼ばれる Lambda）
+│   │   ├── tools/                      # Tool Lambda 群（Agent から AWS SDK で direct invoke、Gateway 経由しない）
 │   │   │   ├── record-choice/          # DynamoDB ChoiceLogs 書込 + SELF_DECISION_LIMIT 判定
 │   │   │   ├── set-mode/               # CategoryStates modeState 更新
 │   │   │   ├── query-category-state/   # CategoryStates 取得
 │   │   │   └── invoke-singularity-action/  # シンギュラリティ実行トリガ
-│   │   ├── memory/                     # AgentCore Memory configuration
-│   │   │   └── memory-config.ts        # session schema / retention 設定
 │   │   └── invoke-wrapper/             # API Gateway → AgentCore Runtime ラッパ Lambda
 │   │       └── invoke-agent.ts
 │   ├── puppet-level/                   # Unit-C: 傀儡度 BE (水口)
@@ -293,11 +291,11 @@ team-dlc-dame-labo-corporation/
 │   │       └── get-category-detail.ts
 │   ├── voice-ui/                       # Unit-D: 音声 UI BE (水口)
 │   │   └── handlers/
-│   │       ├── synthesize-report.ts    # Polly TTS（AgentCore Gateway tool として登録可）
+│   │       ├── synthesize-report.ts    # Polly TTS（Agent から direct invoke）
 │   │       └── push-to-user.ts         # WebSocket push
 │   └── external-messaging/             # Unit-E: 外部送信 (水口 / j-ichikawa fallback)
 │       ├── handlers/
-│       │   └── send-slack-message.ts   # Slack 送信（AgentCore Gateway tool として登録可）
+│       │   └── send-slack-message.ts   # Slack 送信（Agent から direct invoke）
 │       └── whitelist.ts                # ALLOWED_SLACK_* const
 │
 ├── frontend/                           # 高根 領域 (Unit-F)
@@ -327,7 +325,7 @@ team-dlc-dame-labo-corporation/
 - **内部階層 = Unit**: backend 内部で Unit-A〜E が物理ディレクトリで分離、PR スコープが明確
 - **CDK Stack 分割**: `backend/foundation/lib/` 内に Unit ごとの Stack ファイルを配置、stack 単位 deploy 可能
 - **書類審査の動線**: 審査員が `frontend/` を開けば FE 担当の仕事、`backend/{unit}/` を開けば BE Unit の仕事が一目で分かる
-- **Bedrock AgentCore 構成**: `backend/agent/runtime/` が AgentCore Runtime にデプロイされる Agent 本体（コンテナ化）、`backend/agent/tools/` が AgentCore Gateway tools（Lambda）、`backend/agent/memory/` が AgentCore Memory 設定、`backend/agent/invoke-wrapper/` が API Gateway 経由でフロントから呼ばれる薄いラッパ Lambda。Unit-D / Unit-E の Lambda も AgentCore Gateway tools として登録される設計（Agent から直接 Slack 送信 / Polly 合成を呼べる）
+- **Bedrock AgentCore 構成**: `backend/agent/runtime/` が AgentCore Runtime にデプロイされる Agent 本体（コンテナ化）、`backend/agent/tools/` が Agent runtime から AWS SDK で direct invoke される Tool Lambda 群、`backend/agent/invoke-wrapper/` が API Gateway 経由でフロントから呼ばれる薄いラッパ Lambda。Unit-D / Unit-E の Lambda も Agent から direct invoke される設計（**AgentCore Gateway / Memory は MVP 不採用**、Memory は DynamoDB で代替、Gateway は tool 数 4-6 個ではオーバーヘッド大のため。`requirements.md` Appendix B.10 参照）
 
 ### 既存ディレクトリとの関係
 - `discovery-mock/`: 書類審査用に **温存**（Construction で参照禁止、`discovery-mock/README.md` で明記済）

@@ -75,7 +75,7 @@ getPuppetLevelSummary(
 ): Promise<{
   selfDecisionScore: { value: number; trend: number[] };  // 時系列配列
   delegationByCategory: Array<{ categoryId: string; selfCount: number; agentCount: number }>;
-  phase4ReachedCategories: string[];
+  singularityReachedCategories: string[];
   totalChoices: number;
 }>
 ```
@@ -98,7 +98,7 @@ getCategoryDetail(
 
 ## 3. 共通基盤
 
-### 4.1 DynamoDB アクセス層（責務分離のための薄いリポジトリ）
+### 3.1 DynamoDB アクセス層（責務分離のための薄いリポジトリ）
 
 ```typescript
 UsersRepo {
@@ -131,7 +131,7 @@ WebSocketConnectionsRepo {
 }
 ```
 
-### 4.2 EventBridge スケジューラ
+### 3.2 EventBridge スケジューラ
 
 ```typescript
 scheduleSingularitySweep(): void  // CDK / IaC で定義する cron ルール (例: rate(30 minutes))
@@ -163,7 +163,7 @@ pushToUser(
 
 ## 5. フロントエンド SPA
 
-### 6.1 主要画面の Props / State インターフェース（高レベル）
+### 5.1 主要画面の Props / State インターフェース（高レベル）
 
 ```typescript
 // React Component の入出力契約のみ。詳細実装は Construction で。
@@ -174,7 +174,7 @@ pushToUser(
 <PuppetLevelScreen userId, range />
 ```
 
-### 6.2 通信レイヤ
+### 5.2 通信レイヤ
 
 ```typescript
 class ApiClient {

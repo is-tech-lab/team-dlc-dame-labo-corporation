@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="./assets/app-icon.png" alt="Puppet Me app icon" width="200" />
+</p>
+
 # Puppet Me（ぱペみー）
 
 > **人類の傀儡化**

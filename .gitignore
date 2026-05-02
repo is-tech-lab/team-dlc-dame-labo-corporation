@@ -1,0 +1,98 @@
+# ---------- OS ----------
+.DS_Store
+.AppleDouble
+.LSOverride
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# ---------- Editors / IDEs ----------
+.vscode/
+!.vscode/settings.json
+!.vscode/extensions.json
+.idea/
+*.iml
+*.swp
+*.swo
+*~
+.history/
+
+# ---------- Claude Code / AI assistants ----------
+.claude/settings.local.json
+.claude/.credentials.json
+.claude/projects/
+.cursor/
+.aider*
+.codex/
+.windsurf/
+
+# ---------- Environment / Secrets ----------
+.env
+.env.*
+!.env.example
+!.env.sample
+*.pem
+*.key
+secrets.*
+
+# ---------- Logs / Temp ----------
+*.log
+logs/
+tmp/
+temp/
+.cache/
+
+# ---------- Node.js ----------
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.pnpm-store/
+.yarn/
+.next/
+.nuxt/
+.turbo/
+.vite/
+dist/
+build/
+coverage/
+.nyc_output/
+
+# ---------- Python ----------
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.eggs/
+.venv/
+venv/
+env/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.pyre/
+.pytype/
+.tox/
+htmlcov/
+.coverage
+.coverage.*
+
+# ---------- Java / Kotlin ----------
+target/
+*.class
+*.jar
+*.war
+.gradle/
+
+# ---------- Terraform / IaC ----------
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfvars
+!*.tfvars.example
+
+# ---------- Misc ----------
+*.bak
+*.tmp
+.aidlc-docs/audit.md.bak

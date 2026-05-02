@@ -1,0 +1,9 @@
+node_modules/
+dist/
+.vite/
+*.local
+.DS_Store
+*.tsbuildinfo
+# draw.io desktop app の自動バックアップ
+.$*
+*.bkp

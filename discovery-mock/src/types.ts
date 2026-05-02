@@ -1,11 +1,5 @@
-export type Phase = 1 | 2 | 3 | 4;
-export type Category = 'contact' | 'relationship';
-export type ScreenName =
-  | 'onboarding'
-  | 'category-select'
-  | 'suggestion'
-  | 'phase4-listening'
-  | 'mirror';
+export type Category = 'contact' | 'shopping';
+export type CategoryMode = 'active' | 'autonomous';
 
 export type Suggestion = {
   id: string;
@@ -15,10 +9,11 @@ export type Suggestion = {
 
 export type DelegationKind =
   | 'self-decision'
+  | 'free-input'
   | 'single-delegation'
-  | 'phase-up'
   | 'complete-delegation'
-  | 'auto-execute';
+  | 'auto-execute'
+  | 'auto-graduate';
 
 export type HistoryEntry = {
   date: Date;
@@ -29,7 +24,7 @@ export type HistoryEntry = {
 
 export type CategoryState = {
   category: Category;
-  phase: Phase;
+  mode: CategoryMode;
   selfDecisionCount: number;
   delegationCount: number;
   history: HistoryEntry[];
@@ -37,10 +32,12 @@ export type CategoryState = {
   scoreSeries: { day: number; score: number }[];
 };
 
+export type ScreenName = 'onboarding' | 'category-select' | 'suggestion' | 'autonomous' | 'mirror';
+
 export type AppState = {
   userName: string;
   contact: CategoryState;
-  relationship: CategoryState;
+  shopping: CategoryState;
   screen: ScreenName;
   activeCategory: Category | null;
   showCompleteDelegationDialog: boolean;

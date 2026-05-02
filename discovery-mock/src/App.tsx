@@ -1,17 +1,21 @@
 import { useState } from 'react';
-import { AppState, Category, CategoryState, DelegationKind, HistoryEntry, Phase } from './types';
+import { AppState, Category, CategoryState, DelegationKind, HistoryEntry } from './types';
 import { buildInitialScoreSeries, categoryLabel, suggestions } from './mockData';
+
+// HIL: ユーザーが「自分で決める」できるのは 3 回まで。
+// 思想: 3 回トレーニングすれば AI が大体わかる → 自動的に autonomous へ graduate。
+export const SELF_DECISION_LIMIT = 3;
 import OnboardingScreen from './screens/OnboardingScreen';
 import CategorySelectScreen from './screens/CategorySelectScreen';
 import SuggestionScreen from './screens/SuggestionScreen';
-import Phase4Screen from './screens/Phase4Screen';
+import AutonomousScreen from './screens/AutonomousScreen';
 import MirrorScreen from './screens/MirrorScreen';
 import CompleteDelegationDialog from './components/CompleteDelegationDialog';
 import DemoControls from './components/DemoControls';
 
 const initialCategoryState = (cat: Category): CategoryState => ({
   category: cat,
-  phase: 1,
+  mode: 'active',
   selfDecisionCount: 0,
   delegationCount: 0,
   history: [],
@@ -22,7 +26,7 @@ const initialCategoryState = (cat: Category): CategoryState => ({
 const buildInitialState = (): AppState => ({
   userName: '高木皇佑',
   contact: initialCategoryState('contact'),
-  relationship: initialCategoryState('relationship'),
+  shopping: initialCategoryState('shopping'),
   screen: 'onboarding',
   activeCategory: null,
   showCompleteDelegationDialog: false
@@ -62,7 +66,7 @@ export default function App() {
     setState((s) => ({
       ...s,
       activeCategory: cat,
-      screen: s[cat].phase === 4 ? 'phase4-listening' : 'suggestion'
+      screen: s[cat].mode === 'autonomous' ? 'autonomous' : 'suggestion'
     }));
   };
 
@@ -74,43 +78,56 @@ export default function App() {
     setState((s) => ({ ...s, screen: 'mirror' }));
   };
 
+  const checkAndAutoGraduate = (cat: Category, newCount: number) => {
+    if (newCount < SELF_DECISION_LIMIT) return;
+    addHistory(
+      cat,
+      'auto-graduate',
+      `${SELF_DECISION_LIMIT} 回トレーニング完了 → 自律実行モードへ自動遷移`
+    );
+    updateCategory(cat, (prev) => ({ ...prev, mode: 'autonomous' }));
+    decayScore(cat, 8);
+    setTimeout(() => {
+      setState((s) => ({ ...s, screen: 'autonomous' }));
+    }, 1800);
+  };
+
   const handleSelfDecision = (cat: Category, suggestionId: string, reason: string) => {
-    const opt = suggestions[cat][state[cat].phase].find((o) => o.id === suggestionId);
+    const opt = suggestions[cat].find((o) => o.id === suggestionId);
     const detail = `自分で選んだ: ${opt?.text ?? '(不明)'}${reason ? ` / 理由: ${reason}` : ''}`;
     addHistory(cat, 'self-decision', detail);
+    const newCount = state[cat].selfDecisionCount + 1;
     updateCategory(cat, (prev) => ({
       ...prev,
-      selfDecisionCount: prev.selfDecisionCount + 1,
+      selfDecisionCount: newCount,
       lastSelfDecisionAt: new Date()
     }));
     decayScore(cat, 0.5);
+    checkAndAutoGraduate(cat, newCount);
   };
 
-  const handleSingleDelegate = (cat: Category) => {
-    const opt = suggestions[cat][state[cat].phase][0];
-    const detail = `単発委譲: ${opt?.text ?? '(AI 第 1 候補)'}`;
+  const handleFreeInput = (cat: Category, freeText: string) => {
+    if (!freeText.trim()) return;
+    addHistory(cat, 'free-input', `自由記載: ${freeText.trim()}`);
+    const newCount = state[cat].selfDecisionCount + 1;
+    updateCategory(cat, (prev) => ({
+      ...prev,
+      selfDecisionCount: newCount,
+      lastSelfDecisionAt: new Date()
+    }));
+    decayScore(cat, 0.3);
+    checkAndAutoGraduate(cat, newCount);
+  };
+
+  const handleSingleDelegate = (cat: Category, suggestionId: string) => {
+    const opt = suggestions[cat].find((o) => o.id === suggestionId);
+    const detail = `単発委譲（AI 選択）: ${opt?.text ?? '(不明)'}`;
     addHistory(cat, 'single-delegation', detail);
     updateCategory(cat, (prev) => ({
       ...prev,
       delegationCount: prev.delegationCount + 1
     }));
     decayScore(cat, 1.5);
-  };
-
-  const handlePhaseUp = (cat: Category) => {
-    const current = state[cat].phase;
-    if (current >= 4) return;
-    const next = (current + 1) as Phase;
-    addHistory(cat, 'phase-up', `Phase ${current} → Phase ${next} に手動昇格`);
-    updateCategory(cat, (prev) => ({
-      ...prev,
-      phase: next,
-      delegationCount: prev.delegationCount + 1
-    }));
-    decayScore(cat, 4);
-    if (next === 4) {
-      setState((s) => ({ ...s, screen: 'phase4-listening' }));
-    }
   };
 
   const handleRequestCompleteDelegation = () => {
@@ -123,14 +140,14 @@ export default function App() {
     addHistory(cat, 'complete-delegation', `${categoryLabel[cat]} カテゴリを完全委譲した`);
     updateCategory(cat, (prev) => ({
       ...prev,
-      phase: 4,
+      mode: 'autonomous',
       delegationCount: prev.delegationCount + 1
     }));
     decayScore(cat, 12);
     setState((s) => ({
       ...s,
       showCompleteDelegationDialog: false,
-      screen: 'phase4-listening'
+      screen: 'autonomous'
     }));
   };
 
@@ -149,12 +166,17 @@ export default function App() {
     decayScore(cat, 1);
   };
 
-  const handleJumpPhase = (cat: Category, phase: Phase) => {
-    updateCategory(cat, (prev) => ({ ...prev, phase }));
+  const handleToggleAutonomous = (cat: Category) => {
+    updateCategory(cat, (prev) => ({
+      ...prev,
+      mode: prev.mode === 'active' ? 'autonomous' : 'active',
+      // autonomous → active に戻す時はトレーニング回数をリセット (デモ用途)
+      selfDecisionCount: prev.mode === 'autonomous' ? 0 : prev.selfDecisionCount
+    }));
     setState((s) => ({
       ...s,
       activeCategory: cat,
-      screen: phase === 4 ? 'phase4-listening' : 'suggestion'
+      screen: state[cat].mode === 'active' ? 'autonomous' : 'suggestion'
     }));
   };
 
@@ -170,7 +192,7 @@ export default function App() {
         return (
           <CategorySelectScreen
             contact={state.contact}
-            relationship={state.relationship}
+            shopping={state.shopping}
             onSelect={handleSelectCategory}
             onMirror={handleGoMirror}
           />
@@ -179,19 +201,20 @@ export default function App() {
         if (!state.activeCategory) return null;
         return (
           <SuggestionScreen
+            key={state.activeCategory}
             category={state.activeCategory}
-            phase={state[state.activeCategory].phase}
+            selfDecisionCount={state[state.activeCategory].selfDecisionCount}
             onSelectOwn={(id, reason) => handleSelfDecision(state.activeCategory!, id, reason)}
-            onSingleDelegate={() => handleSingleDelegate(state.activeCategory!)}
-            onPhaseUp={() => handlePhaseUp(state.activeCategory!)}
+            onFreeInput={(text) => handleFreeInput(state.activeCategory!, text)}
+            onSingleDelegate={(id) => handleSingleDelegate(state.activeCategory!, id)}
             onCompleteDelegate={handleRequestCompleteDelegation}
             onBack={handleBackToCategorySelect}
           />
         );
-      case 'phase4-listening':
+      case 'autonomous':
         if (!state.activeCategory) return null;
         return (
-          <Phase4Screen
+          <AutonomousScreen
             category={state.activeCategory}
             onAutoExecuted={handleAutoExecuted}
             onBack={handleBackToCategorySelect}
@@ -201,7 +224,7 @@ export default function App() {
         return (
           <MirrorScreen
             contact={state.contact}
-            relationship={state.relationship}
+            shopping={state.shopping}
             onBack={handleBackToCategorySelect}
           />
         );
@@ -227,9 +250,9 @@ export default function App() {
 
       <DemoControls
         activeCategory={state.activeCategory}
-        contactPhase={state.contact.phase}
-        relationshipPhase={state.relationship.phase}
-        onJumpPhase={handleJumpPhase}
+        contactMode={state.contact.mode}
+        shoppingMode={state.shopping.mode}
+        onToggleMode={handleToggleAutonomous}
         onResetAll={handleResetAll}
         onGoMirror={handleGoMirror}
       />

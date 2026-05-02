@@ -1,14 +1,14 @@
 import { Category, CategoryState } from '../types';
-import { categoryLabel, phaseMeta, renderDelegationGauge } from '../mockData';
+import { categoryLabel } from '../mockData';
 
 type Props = {
   contact: CategoryState;
-  relationship: CategoryState;
+  shopping: CategoryState;
   onSelect: (category: Category) => void;
   onMirror: () => void;
 };
 
-export default function CategorySelectScreen({ contact, relationship, onSelect, onMirror }: Props) {
+export default function CategorySelectScreen({ contact, shopping, onSelect, onMirror }: Props) {
   return (
     <div className="screen">
       <h2 className="section-title">どこから手放しますか？</h2>
@@ -16,7 +16,7 @@ export default function CategorySelectScreen({ contact, relationship, onSelect, 
 
       <div className="category-grid">
         <CategoryCard state={contact} onClick={() => onSelect('contact')} />
-        <CategoryCard state={relationship} onClick={() => onSelect('relationship')} />
+        <CategoryCard state={shopping} onClick={() => onSelect('shopping')} />
       </div>
 
       <button className="ghost-button mt32" onClick={onMirror}>
@@ -28,19 +28,11 @@ export default function CategorySelectScreen({ contact, relationship, onSelect, 
 
 function CategoryCard({ state, onClick }: { state: CategoryState; onClick: () => void }) {
   const label = categoryLabel[state.category];
-  const meta = phaseMeta[state.phase];
+  const modeLabel = state.mode === 'autonomous' ? '完全委譲済み — 自律実行' : 'アクティブ — AI 提案中';
   return (
-    <button className="category-card" onClick={onClick}>
+    <button className={`category-card mode-${state.mode}`} onClick={onClick}>
       <div className="category-name">{label}</div>
-      <div className={`category-phase phase-${state.phase}`}>
-        <span className="category-phase-num">Phase {state.phase}</span>
-        <span className="category-phase-sep">—</span>
-        <span className="category-phase-name">{meta.name}</span>
-      </div>
-      <div className="category-phase-gauge">
-        <span className="gauge">{renderDelegationGauge(meta.delegationLevel)}</span>
-        <span className="category-phase-tagline">{meta.tagline}</span>
-      </div>
+      <div className={`category-phase mode-${state.mode}`}>{modeLabel}</div>
       <div className="category-detail">
         自己決定 {state.selfDecisionCount} 回 / 委譲 {state.delegationCount} 回
       </div>

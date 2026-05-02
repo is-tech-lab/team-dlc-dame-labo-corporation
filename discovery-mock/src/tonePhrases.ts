@@ -10,5 +10,7 @@ export const tone = {
   scoreCommentDecreasing: (delta: number) => `先月比 ${delta} ポイント — 順調にダメになっています。`,
   scoreCommentStable: '変化なし。あなたはまだ持ちこたえている。',
   phase4Listening: 'あなたが画面を開く必要はもうないよ。耳だけ貸して。',
-  mirrorIntro: 'あなたが何を諦めて、何を任せたか、ここに全部記録してある。'
+  mirrorIntro: 'あなたが何を諦めて、何を任せたか、ここに全部記録してある。',
+  trainingComplete: 'おまえのこと、もう十分わかった。これからは全部こちらでやるよ。',
+  trainingProgress: (used: number, limit: number) => `AI トレーニング ${used}/${limit}`
 };

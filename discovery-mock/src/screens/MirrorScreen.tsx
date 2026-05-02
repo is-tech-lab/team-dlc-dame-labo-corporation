@@ -1,15 +1,15 @@
 import { CategoryState } from '../types';
-import { categoryLabel, phaseMeta, renderDelegationGauge } from '../mockData';
+import { categoryLabel } from '../mockData';
 import { tone } from '../tonePhrases';
 
 type Props = {
   contact: CategoryState;
-  relationship: CategoryState;
+  shopping: CategoryState;
   onBack: () => void;
 };
 
-export default function MirrorScreen({ contact, relationship, onBack }: Props) {
-  const allHistory = [...contact.history, ...relationship.history]
+export default function MirrorScreen({ contact, shopping, onBack }: Props) {
+  const allHistory = [...contact.history, ...shopping.history]
     .sort((a, b) => b.date.getTime() - a.date.getTime())
     .slice(0, 10);
 
@@ -21,10 +21,10 @@ export default function MirrorScreen({ contact, relationship, onBack }: Props) {
 
       <div className="mirror-grid">
         <CategoryStatusCard state={contact} />
-        <CategoryStatusCard state={relationship} />
+        <CategoryStatusCard state={shopping} />
       </div>
 
-      <ScoreChart contact={contact} relationship={relationship} />
+      <ScoreChart contact={contact} shopping={shopping} />
 
       <div className="mirror-section">
         <h3>委譲アクション履歴</h3>
@@ -54,19 +54,13 @@ function CategoryStatusCard({ state }: { state: CategoryState }) {
   const lastDayLabel = state.lastSelfDecisionAt
     ? formatRelative(state.lastSelfDecisionAt)
     : '自己決定なし';
-  const meta = phaseMeta[state.phase];
+  const modeLabel = state.mode === 'autonomous' ? '完全委譲済み — 自律実行' : 'アクティブ';
 
   return (
-    <div className={`mirror-card phase-${state.phase}`}>
+    <div className={`mirror-card mode-${state.mode}`}>
       <div className="mirror-card-name">{categoryLabel[state.category]}</div>
       <div className="mirror-card-phase">
-        <span className="mirror-card-phase-num">Phase {state.phase}</span>
-        <span className="mirror-card-phase-name"> — {meta.name}</span>
-        {state.phase === 4 && <span className="mirror-card-phase-extra">（完全委譲済み）</span>}
-      </div>
-      <div className="mirror-card-gauge">
-        <span className="gauge">{renderDelegationGauge(meta.delegationLevel)}</span>
-        <span className="mirror-card-tagline">{meta.tagline}</span>
+        <span className="mirror-card-phase-name">{modeLabel}</span>
       </div>
       <div className="mirror-card-stats">
         <div>自己決定 {state.selfDecisionCount} 回</div>
@@ -77,12 +71,12 @@ function CategoryStatusCard({ state }: { state: CategoryState }) {
   );
 }
 
-function ScoreChart({ contact, relationship }: { contact: CategoryState; relationship: CategoryState }) {
+function ScoreChart({ contact, shopping }: { contact: CategoryState; shopping: CategoryState }) {
   const width = 600;
   const height = 200;
   const padding = 32;
 
-  const scoreSeries = mergeSeries(contact.scoreSeries, relationship.scoreSeries);
+  const scoreSeries = mergeSeries(contact.scoreSeries, shopping.scoreSeries);
   if (scoreSeries.length === 0) return null;
 
   const maxScore = 100;

@@ -1,9 +1,8 @@
 import { useEffect, useState } from 'react';
 import { Category } from '../types';
-import { categoryLabel, phase4Reports } from '../mockData';
+import { autonomousReports, categoryLabel } from '../mockData';
 import { tone } from '../tonePhrases';
 import { speak, stopSpeaking } from '../lib/speech';
-import PhaseBadge, { PhaseDescription } from '../components/PhaseBadge';
 
 type Props = {
   category: Category;
@@ -11,14 +10,10 @@ type Props = {
   onBack: () => void;
 };
 
-export default function Phase4Screen({ category, onAutoExecuted, onBack }: Props) {
-  const reports = phase4Reports[category];
+export default function AutonomousScreen({ category, onAutoExecuted, onBack }: Props) {
+  const reports = autonomousReports[category];
   const [pickedReports, setPickedReports] = useState<string[]>([]);
   const [speaking, setSpeaking] = useState(false);
-
-  useEffect(() => {
-    return () => stopSpeaking();
-  }, []);
 
   const triggerAutoExecute = async () => {
     const next = reports[Math.floor(Math.random() * reports.length)];
@@ -32,27 +27,46 @@ export default function Phase4Screen({ category, onAutoExecuted, onBack }: Props
     }
   };
 
+  // 入った瞬間に 1 回目を自動発火 (放置されたら沈黙が「真っ暗」になる)
+  useEffect(() => {
+    const t = setTimeout(() => {
+      void triggerAutoExecute();
+    }, 1500);
+    return () => {
+      clearTimeout(t);
+      stopSpeaking();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <div className="screen phase4">
       <button className="back-link" onClick={onBack}>← カテゴリに戻る</button>
       <div className="suggestion-header">
         <span className="category-tag">{categoryLabel[category]}</span>
-        <PhaseBadge phase={4} />
+        <span className="autonomous-badge">完全委譲済み — 自律実行モード</span>
       </div>
-      <PhaseDescription phase={4} />
+
+      <div className="autonomous-graduation-message">
+        {tone.trainingComplete}
+      </div>
 
       <h2 className="phase4-title">{tone.phase4Listening}</h2>
 
       <div className="phase4-card">
         <div className="phase4-instruction">
-          イヤホンを接続するか、PC の音量を上げてください。
+          {speaking ? (
+            <span className="autonomous-pulse">AI が代わりに動いてる…</span>
+          ) : (
+            <>イヤホンを接続するか、PC の音量を上げてください。</>
+          )}
         </div>
         <button
           className="phase4-execute-button"
           onClick={triggerAutoExecute}
           disabled={speaking}
         >
-          {speaking ? '報告中…' : '自律実行を発火（デモ）'}
+          {speaking ? '報告中…' : 'もう一度発火（デモ）'}
         </button>
       </div>
 

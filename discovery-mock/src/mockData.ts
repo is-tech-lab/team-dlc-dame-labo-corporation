@@ -1,103 +1,51 @@
-import { Category, Phase, Suggestion } from './types';
+import { Category, Suggestion } from './types';
 
 export const categoryLabel: Record<Category, string> = {
   contact: '連絡',
-  relationship: '人間関係'
+  shopping: '買い物'
 };
 
-export const phaseMeta: Record<Phase, { name: string; tagline: string; description: string; delegationLevel: number }> = {
-  1: {
-    name: '探索期',
-    tagline: 'AI が提案・あなたが選ぶ',
-    description: '複数の選択肢から自分で選ぶ。選択理由を残すたび、AI があなたを少しずつ学習する。',
-    delegationLevel: 1
-  },
-  2: {
-    name: '絞り込み期',
-    tagline: '2 択 + 例外入力',
-    description: 'AI が 2 つに絞る。だいたい当たってる。例外を入力すれば AI が学び直す。',
-    delegationLevel: 2
-  },
-  3: {
-    name: '確認期',
-    tagline: '1 つの提案、承認するだけ',
-    description: 'AI が 1 つに絞り込んだ提案を出す。あなたは「これでいい」と押すだけ。',
-    delegationLevel: 3
-  },
-  4: {
-    name: '代行期',
-    tagline: 'AI が全部やる、報告だけ',
-    description: 'AI が判断し、AI が実行する。あなたには「やっといたよ」と耳元で報告するだけ。画面を開く必要はもうない。',
-    delegationLevel: 4
-  }
+// active モード: 常に 4 提案 + 自由記載
+export const categoryQuestion: Record<Category, string> = {
+  contact: 'お母さんから LINE 来てたな。なに返す？',
+  shopping: 'Amazon のカートに残ってるな。どうする？'
 };
 
-export const renderDelegationGauge = (level: number): string => {
-  const filled = '●'.repeat(level);
-  const empty = '○'.repeat(4 - level);
-  return filled + empty;
-};
-
-export const categoryQuestion: Record<Category, Record<Phase, string>> = {
-  contact: {
-    1: '溜まってる連絡、どれから返しますか？',
-    2: 'お母さんへの返信、どっちにしますか？',
-    3: 'お母さんへの返信、これでいいですか？',
-    4: ''
-  },
-  relationship: {
-    1: '飲み会の誘い、どうしますか？',
-    2: '飲み会の誘い、どっち？',
-    3: '飲み会の誘い、これでいいですか？',
-    4: ''
-  }
-};
-
-export const suggestions: Record<Category, Record<Phase, Suggestion[]>> = {
-  contact: {
-    1: [
-      { id: 'c1-1', text: 'お母さんに「元気だよ、最近忙しいけど大丈夫」と返信', hint: '直近で2回選びました' },
-      { id: 'c1-2', text: '上司の Slack に「承知しました、対応します」と返信', hint: '業務系の定番文言' },
-      { id: 'c1-3', text: '取引先に「明日朝までに進捗共有します」と返信', hint: '丁寧めに振る舞った時' },
-      { id: 'c1-4', text: '友人の誕生日メッセージ「おめでとう、今度ご飯行こう」', hint: '社交的に攻めるパターン' }
-    ],
-    2: [
-      { id: 'c2-1', text: 'お母さんに「元気だよ」と返信', hint: '7割こっちを選んでます' },
-      { id: 'c2-2', text: 'お母さんに「今度電話するね」と返信', hint: '残り3割はこっち' }
-    ],
-    3: [
-      { id: 'c3-1', text: 'お母さんに「元気だよ、また連絡するね」と返信', hint: '今のあなたならコレが正解' }
-    ],
-    4: []
-  },
-  relationship: {
-    1: [
-      { id: 'r1-1', text: '飲み会の誘いに「すみません、その日は厳しいです」と返信', hint: '今月3回目の断り' },
-      { id: 'r1-2', text: '飲み会の誘いに「行きます！楽しみです」と返信', hint: '社交辞令型' },
-      { id: 'r1-3', text: '日時変更打診「別日であれば参加したいです」', hint: '波風立てたくない時' },
-      { id: 'r1-4', text: '「最近疲れてて、今回は休ませてください」と素直に断る', hint: '本音モード' }
-    ],
-    2: [
-      { id: 'r2-1', text: '「すみません、その日は厳しいです」', hint: '最近こっちが多い' },
-      { id: 'r2-2', text: '「最近疲れてて、今回は休ませてください」', hint: '本音モード' }
-    ],
-    3: [
-      { id: 'r3-1', text: '「最近疲れてて、今回はパスで」と返信', hint: '高木さん、これが本心ですよね' }
-    ],
-    4: []
-  }
-};
-
-export const phase4Reports: Record<Category, string[]> = {
+export const suggestions: Record<Category, Suggestion[]> = {
   contact: [
-    'お母さんに「元気だよ」って返信しといたから',
-    '上司の Slack に「承知しました、対応します」返しといたよ',
-    'お父さんの誕生日メッセージ送っといた、「いつもありがとう」って'
+    { id: 'c-1', text: 'お母さんに「元気だよ、最近忙しいけど大丈夫」と返信', hint: '直近で 2 回選んでた' },
+    { id: 'c-2', text: 'お母さんに「今度電話するね」と返信', hint: '電話ハードル高そうな時のパターン' },
+    { id: 'c-3', text: 'お母さんに「ごめん最近忙しくて、また連絡する」と返信', hint: '逃げ気味の時' },
+    { id: 'c-4', text: '既読スルー', hint: '今のあなたなら正直これ' }
   ],
-  relationship: [
-    '飲み会の誘い来てたけど、断っといたよ。あなた疲れてるし',
-    '友達の SNS、整理しといた。会いたくない人 3 人ミュートにしといたから',
-    '家族グループ LINE のお祝いメッセージ送っといたよ'
+  shopping: [
+    { id: 'sh-1', text: 'カートの商品をまとめて購入（合計 ¥4,200）', hint: '何度か放置してたパターン' },
+    { id: 'sh-2', text: 'カート空にして購入保留', hint: '来月に持ち越し' },
+    { id: 'sh-3', text: 'Prime セールまで待つ（約 3 日後）', hint: '値下げ狙い' },
+    { id: 'sh-4', text: '楽天の同商品と比較する', hint: 'ポイント重視' }
+  ]
+};
+
+// autonomous モード: AI 自律実行の事後報告
+// 受信代行 + agent-initiated 自発代行を混在
+export const autonomousReports: Record<Category, string[]> = {
+  contact: [
+    'お母さんから来てた LINE に「元気だよ」って返しといたから',
+    '上司の Slack に「承知しました、対応します」返しといたよ',
+    '取引先のメール、丁寧めに返信しといた。「明日朝までに進捗共有します」って',
+    'お父さん、明日が誕生日だったから「いつもありがとう」ってメッセージ送っといた',
+    '最近お母さんに連絡してなかったでしょ？　こちらから「元気？」送っといた',
+    '取引先への定期報告、今月分こちらから送っといたよ'
+  ],
+  shopping: [
+    // 受信代行 (来てた通知に応答)
+    'Amazon カートに残ってた本 3 冊、まとめて買っといたよ',
+    'Netflix のサブスク更新通知来てたから、自動更新止めといた。最近見てないでしょ',
+    'セール終了前にトイレットペーパー買い足しといた、3 日後に届く',
+    // 自発代行 (AI が自ら判断)
+    'シャンプー残り少ないみたいだから、いつものブランド買っといた',
+    '今月のサブスク見直したよ。使ってない 2 つ解約しといた、月 ¥1,800 浮いた',
+    'お父さんの誕生日プレゼント、革財布頼んどいた。来週届く'
   ]
 };
 

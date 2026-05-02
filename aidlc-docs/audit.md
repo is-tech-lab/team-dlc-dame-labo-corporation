@@ -311,6 +311,14 @@ ISO 8601 形式（JST, +09:00）でタイムスタンプを記録する。
 
 ---
 
+## Construction フェーズ用 TODO ファイル作成（Nix 検討）
+**Timestamp**: 2026-04-30T01:30:00+09:00
+**User Input**: "そうだね！そうしよう！このnixについてのTODOはどこかに作っておいて！TODO_construction.mdみたいなのはどう？"
+**AI Response**: "`aidlc-docs/construction/TODO_construction.md` を新規作成。Construction フェーズで判断・実装する項目の park 場所として運用ルール明示（追記式・[x] でチェック・履歴を残す）。初回項目として「Nix flake による開発環境の再現性確保」を park。何を/なぜ/いつ判断/開かれた質問/Discovery Mock では導入しない理由 を記述。Inception 中の Slack メッセージ準備で出た議論をきっかけに、Construction フェーズで Unit 0（共通基盤）の Code Generation Planning 前に flake を整備する想定で park。"
+**Context**: Inception 中に出た Construction フェーズ向けアイデアの park 機構整備
+
+---
+
 ## Discovery Mock - 高木氏による初回承認
 **Timestamp**: 2026-04-30T00:05:00+09:00
 **User Input**: "モックいいと思います　みました"

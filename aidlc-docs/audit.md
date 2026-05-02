@@ -311,6 +311,14 @@ ISO 8601 形式（JST, +09:00）でタイムスタンプを記録する。
 
 ---
 
+## MVP Override Appendix の追加（上流ドキュメントの整合性担保）
+**Timestamp**: 2026-05-02T16:30:00+09:00
+**User Input**: "DLC 的には、上流のフローもメンテナンスする必要があるが、矛盾がないように修正してくれたの？" → "A でよろしく"
+**AI Response**: "直近の HIL リファクタ commit (e8163ad) では mock + audit.md + TODO_construction.md のみ更新で、上流 .md 群（requirements.md / stories.md / personas.md）は無傷のまま、と確認。divergence の整合化として **A) MVP Override 追記案** を採用。\n\n各ファイルの末尾に Appendix B を追加:\n- `requirements.md`: B.1 カテゴリ置換 (人間関係 → 買い物) / B.2 Phase 1-4 → 2 モード化 / B.3 委譲ボタン 3 → 2 / B.4 Profile Agent 除外 / B.5 3 回トレーニング上限 / B.6 HIL/AI-proposes 設計 / B.7 自由記載 / B.8 トーン具体化\n- `stories.md`: B.1 Epic 3 置換 / B.2 Phase ジャーニーストーリー collapse / B.3 新規ストーリー候補 (X.1-X.4) / B.4 委譲ボタン削減 / B.5 マッピング温存 / B.6 MoSCoW 再評価\n- `personas.md`: B.1 ペインポイント MVP 重点シフト (人間関係 → 買い物) / B.2 物語の核は維持\n\n本文（チーム合作合意事項）は完全に温存、appendix のみで MVP override を documenting。書類審査で divergence が「明確に意図された MVP 簡素化」として読める形に。"
+**Context**: 上流 .md とDiscovery Mock の divergence 整合化（A 案、appendix only）
+
+---
+
 ## Construction フェーズ用 TODO ファイル作成（Nix 検討）
 **Timestamp**: 2026-04-30T01:30:00+09:00
 **User Input**: "そうだね！そうしよう！このnixについてのTODOはどこかに作っておいて！TODO_construction.mdみたいなのはどう？"

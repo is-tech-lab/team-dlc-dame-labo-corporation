@@ -510,3 +510,19 @@ ISO 8601 形式（JST, +09:00）でタイムスタンプを記録する。
 **Context**: Bedrock AgentCore 採用を実装計画に反映、requirements.md NFR-1 との整合性確保
 
 ---
+
+## Bedrock AgentCore Runtime GA 化のファクトチェック訂正
+**Timestamp**: 2026-05-03T01:30:00+09:00
+**User Input**: "AgentCore RuntimeはGAしてますよ！！ファクトチェック"
+**AI Response**: "私の knowledge cutoff は 2026 年 1 月。AgentCore は 2024 年 12 月 re:Invent で preview として announce されたのは知っていたが、その後の GA 化（2026 年 5 月時点では既に GA）は把握できていなかった。\n\n**訂正内容**:\n- `unit-of-work.md` Unit-B の AgentCore 採用判断記述から『preview』前提を削除\n- AgentCore Runtime / Observability に **GA 済 (2026-05 時点)** と明記\n- Memory / Gateway 不採用の理由を『preview 不安定リスク回避』から **『1 Agent には過剰』『tool 数少ないとオーバーヘッド大』『MVP 簡素化』** に絞り直し（本来の根拠）\n- δ 案（AgentCore Runtime + Observability のみ採用）の判断を強化（preview リスクなし、GA 安定）\n\n**学び**: knowledge cutoff (2026-01) を超える AWS サービス GA 状況については、ユーザーの最新情報を信頼する。AWS は re:Invent announce → 半年〜1 年で GA するパターンが多く、2024-12 announce → 2025 年中に GA は十分妥当。\n\n**判断への影響**: AgentCore Runtime + Observability の採用は preview リスクの懸念がなくなったため **より積極的に採用する根拠**が成立。Multi-agent / Memory / Gateway 不採用は『1 Agent 構成には過剰』という独立した根拠で維持。"
+**Context**: 私の knowledge cutoff 起因のファクト誤認を user 指摘で訂正、設計判断の前提を修正
+
+---
+
+## AI-DLC 上位フローへの AgentCore 採用範囲反映
+**Timestamp**: 2026-05-03T01:50:00+09:00
+**User Input**: "このagentcoreの件、DLC的に直した方がいい上位フローあったら直して"
+**AI Response**: "AI-DLC 階層に従って上流ドキュメントを点検し、AgentCore 採用範囲（Runtime + Observability のみ）を以下 4 ファイルに反映:\n\n[1] `requirements.md` Appendix B.10 新規追加: 採用 / 不採用の AgentCore 要素表 + 採用根拠 + 将来の park 言及。本文 §6 NFR-1 は append-only 戦略で温存。\n\n[2] `application-design.md`:\n- §1.3 基本構造に「Bedrock AgentCore Runtime (GA) 上にホスト」+「採用範囲: Runtime + Observability のみ」を明記\n- §2 アーキテクチャ俯瞰図 Mermaid: AgentCore ノード追加、AgentL → AgentCore → Bedrock の流れに修正\n- §3 コンポーネントサマリ表で Unit-1 ダメ・ラボ Agent に AgentCore Runtime + Observability ラベル追加\n\n[3] `components.md`:\n- §1 表の MVP 採用技術を「Amazon Bedrock Agent (Claude)」→「Amazon Bedrock AgentCore Runtime (GA) + Observability + Bedrock Claude」に変更\n- §2.1 ダメ・ラボ Agent Purpose に AgentCore Runtime ホスト + Observability トレースの記述追加、採用範囲注記\n\n[4] `application-design-plan.md` Follow-up C-AgentCore 新規セクション追加: user 発言引用 + 採用範囲表 + 採用根拠 + 詳細リンク。Step 9 の Follow-up Resolution として記録。\n\n[5] `TODO_construction.md`:\n- 既存 park 項目「エージェント構成の再分離検討」の開かれた質問に AgentCore Multi-agent Collaboration 移行検討を追記\n- 新規 park 項目「AgentCore フル機能採用への移行（Multi-agent / Memory / Gateway）」を追加: 開かれた質問 + Memory retention / Gateway tools 移行 / Multi-agent Supervisor pattern との統合 / Identity 活用\n\n**変更しなかった箇所**:\n- `stories.md`: Story レベルに AgentCore 詳細は出ないため変更不要\n- `application-design-plan.md` C-1 / C-2 Z 回答（マルチエージェント連結 moot 化）: AgentCore Multi-agent 不採用と整合、変更不要\n- `services.md` / `component-dependency.md` / `unit-of-work.md` / `unit-of-work-dependency.md` / `unit-of-work-story-map.md`: 既に Bedrock AgentCore 経路で記述済（unit-of-work.md は user の AgentCore 指摘を受けて修正済）\n- `discovery-mock/agent-flow.drawio`: 捨てモック前提、agent flow 自体は変わらないため不要\n\n**整合性検証**:\n- 「Runtime + Observability のみ」が requirements / application-design / unit-of-work の全層で一貫\n- 「Multi-agent / Memory / Gateway 不採用」の根拠（1 Agent 過剰、DDB 代替、tool 数少ない）が全層で揃う\n- 将来移行は `TODO_construction.md` の park 項目で documenting"
+**Context**: AI-DLC の Inception フェーズ全層を AgentCore 採用範囲確定に合わせて整合化、append-only 戦略維持
+
+---

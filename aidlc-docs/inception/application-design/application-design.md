@@ -42,10 +42,11 @@
 | **C-8 + C-8a** | **B + コード const ホワイトリスト + DRY_RUN** | デモ用専用 Slack workspace に限定実送信、誤送信防止を多層化 |
 
 ### 1.3 §0 で確定済みの基本構造
-- **AI エージェント**: 1 個（ダメ・ラボ Agent、mode-aware）
+- **AI エージェント**: 1 個（ダメ・ラボ Agent、mode-aware）、**Bedrock AgentCore Runtime (GA) 上にホスト**
 - **機能 Unit**: 傀儡度
 - **横断要素**: 共通基盤 / 音声 UI / フロントエンド（**認証基盤は 2026-05-02 撤廃**、マルチユーザー対応時に park から復帰）
 - **Mode 遷移トリガ**: 完全委譲ボタン OR `SELF_DECISION_LIMIT = 3` auto-graduate
+- **AgentCore 採用範囲**: Runtime + Observability のみ（Gateway / Memory / Multi-agent / Identity / Code Interpreter / Browser は MVP 不採用、`requirements.md` Appendix B.10 参照）
 
 ---
 
@@ -79,7 +80,8 @@ flowchart LR
         end
 
         subgraph AI/ML
-            Bedrock[Bedrock Agent<br/>Claude]
+            AgentCore[Bedrock AgentCore Runtime<br/>+ Observability<br/>GA]
+            Bedrock[Bedrock Claude<br/>via AgentCore]
             Polly[Polly TTS]
         end
 
@@ -95,7 +97,8 @@ flowchart LR
     SPA <--> WS
     REST --> AgentL
     REST --> PuppetLevelL
-    AgentL --> Bedrock
+    AgentL --> AgentCore
+    AgentCore --> Bedrock
     AgentL --> ExtL
     AgentL --> VoiceL
     VoiceL --> Polly
@@ -116,7 +119,7 @@ flowchart LR
 
 | # | コンポーネント | 主役の責務 | 重要決定 |
 |---|---|---|---|
-| 1 | ダメ・ラボ Agent | mode-aware、自我/シンギュラリティ 切替 | 単一 Agent に統合 |
+| 1 | ダメ・ラボ Agent | mode-aware、自我/シンギュラリティ 切替、**AgentCore Runtime (GA) + Observability** にホスト | 単一 Agent に統合 |
 | 2 | 傀儡度 | オンデマンド集計 | C-6 = A |
 | 3 | 共通基盤 | API GW (REST+WS) / Lambda Layer / DDB / EventBridge | C-3a, C-4 |
 | 4 | 音声 UI | Polly + WebSocket push | C-5 = A |

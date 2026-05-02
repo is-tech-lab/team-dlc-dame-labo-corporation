@@ -15,7 +15,7 @@
 
 | # | コンポーネント名 | カテゴリ | 主たる責務 | MVP 採用技術 |
 |---|---|---|---|---|
-| 1 | **ダメ・ラボ Agent** | AI 中核 | 自我/シンギュラリティモード切替、提案生成、自律実行、context 推論 | Amazon Bedrock Agent (Claude) |
+| 1 | **ダメ・ラボ Agent** | AI 中核 | 自我/シンギュラリティモード切替、提案生成、自律実行、context 推論 | **Amazon Bedrock AgentCore Runtime (GA) + Observability** + Bedrock Claude |
 | 2 | **傀儡度** | 機能 Unit | 選択ログ集計、自己決定能力スコア算出、ダッシュボード描画 | Lambda + React component |
 | 3 | **共通基盤** | 横断 | API Gateway, Lambda 共通レイヤ, DynamoDB データストア, EventBridge スケジューラ | API Gateway (REST + WebSocket), Lambda Layer, DynamoDB, EventBridge |
 | 4 | **音声 UI** | 横断 | Polly TTS 音声合成、WebSocket push 配信、フロント再生 | Amazon Polly + API Gateway WebSocket |
@@ -30,7 +30,9 @@
 
 ### 2.1 ダメ・ラボ Agent
 
-**Purpose**: 単一の AI エージェントとして、ユーザーの観察データから context を推論し、mode に応じた振る舞いを切り替える。MVP の AI 中核。
+**Purpose**: 単一の AI エージェントとして、ユーザーの観察データから context を推論し、mode に応じた振る舞いを切り替える。MVP の AI 中核。**Amazon Bedrock AgentCore Runtime (GA) 上にコンテナとしてホスト**、AgentCore Observability で全 step のトレース取得。
+
+**AgentCore 採用範囲（最小限）**: Runtime + Observability のみ（Gateway / Memory / Multi-agent / Identity / Code Interpreter / Browser は MVP 不採用）。詳細: `requirements.md` Appendix B.10、`unit-of-work.md` §2 Unit-B 参照。
 
 > **設計上の意図（傀儡化方針）**
 >

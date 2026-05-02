@@ -81,16 +81,28 @@
 >
 > AgentCore Runtime 上の Agent システムプロンプトに本タグラインを埋め込む（Functional Design で正式化）。
 
-**Bedrock AgentCore 構成要素の採用**:
-| AgentCore 要素 | 採用 | 用途 |
+**Bedrock AgentCore 構成要素の採用**（**Observability 目的の最小限採用**）:
+
+> **採用判断（2026-05-03）**: 当初は AgentCore のフル機能採用を検討したが、1 Agent 構成では **Multi-agent / Memory / Gateway は過剰**。一方、**AgentCore Observability は AI agent デバッグのゴールドスタンダード** で、Replay / Compare 機能は代替手段（Bedrock Model Invocation Logging + X-Ray）で取れない差別化要素。よって **Runtime + Observability のみ採用**、他は MVP 範囲では撤回。
+>
+> なお Bedrock AgentCore Runtime は **GA 済**（2026-05 時点）のため、preview リスクの懸念はない。
+
+| AgentCore 要素 | 採用 | 用途 / 不採用理由 |
 |---|---|---|
-| **AgentCore Runtime** | ✅ | Agent 本体のホスティング（コンテナ実行）。任意フレームワーク (Strands Agents / LangGraph 等) で書ける |
-| **AgentCore Gateway** | ✅ | tools (Lambda) を Agent から呼び出す統合レイヤ |
-| **AgentCore Memory** | ✅ | 短期記憶（カテゴリ単位の context）+ 長期記憶（ユーザー嗜好の蓄積、MVP では限定的に） |
-| **AgentCore Identity** | ❌ | 認証撤廃済のため不要、demo-user-001 固定 |
-| **AgentCore Observability** | ✅ | CloudWatch Metrics / Logs 経由で agent 動作を可視化（NFR-5 監視要件） |
+| **AgentCore Runtime** (GA) | ✅ | Observability の前提条件、Agent をコンテナとして実行 |
+| **AgentCore Observability** | ✅ | **本採用の主目的**: 全 step の timeline / トークン / errors の自動可視化、Replay / Compare 機能でデバッグ生産性を確保 |
+| **AgentCore Gateway** | ❌ | 1 Agent 構成 + tool 数 4-6 個では Lambda 直接 invoke の方が単純、オーバーヘッド回避 |
+| **AgentCore Memory** | ❌ | DynamoDB (CategoryStates / ChoiceLogs) で十分、独立した抽象化を増やさない MVP 簡素化 |
+| **AgentCore Identity** | ❌ | 認証撤廃済（demo-user-001 固定） |
+| **AgentCore Multi-agent Collaboration** | ❌ | 1 Agent 構成のため不要 |
 | **AgentCore Code Interpreter** | ❌ | MVP 不要 |
 | **AgentCore Browser** | ❌ | MVP 不要 |
+
+**Observability 採用の根拠**:
+- AI agent デバッグは「なぜこの提案が出たか」「どの step で詰まったか」の切り分けが核心、CloudWatch Logs だけでは prompt iteration 時に 2-3 時間吸われる場面が頻発
+- AgentCore Observability の Replay（過去リクエスト再実行）と Compare（prompt 変更前後比較）は代替手段では取れない差別化要素
+- ハッカソン 8 日締切下では prompt 微調整サイクルを高速化することがデモ品質に直結
+- **Runtime / Observability ともに GA 済**で安定性リスクがない
 
 **Responsibilities**:
 - **AgentCore Runtime**: Agent 本体（システムプロンプト + mode 切替ロジック + Bedrock model 推論）

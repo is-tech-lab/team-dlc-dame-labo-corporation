@@ -61,6 +61,7 @@ Construction フェーズの **Application Design** または **Functional Desig
 - Bedrock の同一 Agent で mode 切替（自我 / シンギュラリティ）する設計と、Bedrock 上で別 Agent を立てる設計の比較
 - IAM Role の分離粒度（user 対話 Lambda と シンギュラリティ実行 Lambda は別 Role が望ましい？）
 - Profile Agent 復活時の連結パターン（Supervisor / Orchestrator / Event-driven、`application-design-plan.md` Question C-1 を再活用）
+- **AgentCore Multi-agent Collaboration** への移行検討（複数 Agent を AgentCore Supervisor pattern で連携、Memory / Gateway も同時に有効化、書類審査後の予選 / 決勝に向けた拡張）
 
 **MVP では統合した理由**:
 - Discovery Mock のチームレビュー後（2026-05-02）、HIL 設計と相性的に「単一 Agent が mode で切替」が最も単純
@@ -167,6 +168,34 @@ Construction フェーズの **Application Design** または **Functional Desig
 
 ---
 
+## AgentCore フル機能採用への移行（Multi-agent / Memory / Gateway）
+
+**項目**: MVP では Runtime + Observability のみ採用しているが、将来 AgentCore のフル機能（Multi-agent Collaboration / Memory / Gateway）に移行する検討。
+
+**MVP の状態**: AgentCore Runtime + Observability のみ採用済（2026-05-03、user 指示）。`requirements.md` Appendix B.10 で範囲を明文化。
+
+**なぜ park**:
+- MVP は 1 Agent 構成のため Multi-agent Collaboration は不要
+- tool 数 4-6 個では Gateway はオーバーヘッド大
+- Memory は DynamoDB（CategoryStates / ChoiceLogs）で代替可能
+- ただし将来、Profile Agent 復活 / 嗜好の長期記憶 / 複数 Agent 連携 が必要になれば AgentCore のフル機能採用が合理的
+
+**いつ判断**:
+- 上記「エージェント構成の再分離検討」と連動して評価
+- 予選 / 決勝に向けた拡張時、または本番運用時に再評価
+
+**開かれた質問**:
+- AgentCore Memory の retention / schema 設計（短期 session vs 長期嗜好）
+- AgentCore Gateway へ Lambda tools を移行する際のコスト見積
+- Multi-agent Supervisor pattern と既存の自我 / シンギュラリティ mode 切替ロジックとの統合
+- AgentCore Identity の活用（マルチユーザー対応復帰時、Cognito との分担）
+
+**参考**:
+- 関連ドキュメント: `requirements.md` Appendix B.10、`unit-of-work.md` §2 Unit-B、`unit-of-work-dependency.md` §2
+
+---
+
 ## 履歴（追記）
 
 - 2026-05-02 夜: 認証基盤（Cognito）の追加を park（決勝プレゼンでマルチユーザー訴求なしのため MVP 撤廃決定を受けて）
+- 2026-05-03: AgentCore フル機能採用（Multi-agent / Memory / Gateway）を park（MVP は Runtime + Observability のみ採用に範囲限定）

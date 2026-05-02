@@ -26,6 +26,7 @@
 - ダメ・ラボ Agent（仮称、単一）: 観察データから context 推論、mode に応じて以下を切替
   - Active モード: 4 提案 + 自由記載をフロントへ返却、選択ログ DynamoDB 書込
   - Autonomous モード: 受信代行 / 自発代行 を Bedrock 自律判断、Polly 音声報告生成
+- **Mode 遷移トリガー**: (a) ユーザーの完全委譲ボタン押下、または (b) **`SELF_DECISION_LIMIT = 3` トレーニング上限到達による auto-graduate** のいずれかで Active → Autonomous へ遷移。詳細は `requirements.md` Appendix B.5、`stories.md` Appendix B.3 Story X.1 参照。
 
 **当初の 3 エージェント分割（将来構想として park）**
 - サジェスチョン・エージェント: ユーザー対話、選択肢生成、選択理由抽出

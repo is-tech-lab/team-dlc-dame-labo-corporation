@@ -12,7 +12,7 @@
 
 | # | サービス名 | トリガ | 関係コンポーネント | API 種別 |
 |---|---|---|---|---|
-| S1 | **ユーザー登録 / ログイン** | フロントからの認証アクション | 認証基盤 | REST + Cognito SDK |
+| S1 | **オンボーディング（名前入力でセッション開始）** | フロント初回起動 | フロントエンド SPA のみ（ローカルストレージ保持） | フロント完結（バックエンド呼出なし） |
 | S2 | **自我モード サジェスチョン** | フロントからの提案要求 | ダメ・ラボ Agent + 共通基盤 | REST 同期 |
 | S3 | **選択イベント記録 + Mode 遷移判定** | フロントからの選択 / 委譲アクション | ダメ・ラボ Agent + 共通基盤 | REST 同期 |
 | S4 | **完全委譲（即時 シンギュラリティ遷移）** | フロントの完全委譲ボタン | ダメ・ラボ Agent + 共通基盤 + 音声 UI | REST 同期 + WebSocket push |
@@ -23,17 +23,22 @@
 
 ---
 
-## S1. ユーザー登録 / ログイン
+## S1. オンボーディング（名前入力でセッション開始）
 
 ```
-[Frontend SPA] --signUp/signIn--> [Cognito]
-[Frontend SPA] <--idToken--------- [Cognito]
-[Frontend SPA] --REST API (with Bearer)--> [API Gateway: Cognito Authorizer 検証]
+[Frontend SPA] 起動
+       ↓
+ローカルストレージに userName / userId(hardcoded "demo-user-001") があるか確認
+       ↓ なし
+[OnboardingScreen] で名前を聞く（"あなたを何と呼べばいい？"）
+       ↓ 入力
+ローカルストレージに保存 → カテゴリ選択画面へ
 ```
 
 **責務**:
-- 認証フローは Cognito Hosted UI / SDK に委譲
-- バックエンド側はトークン検証のみ（Cognito Authorizer）
+- フロントエンドのみで完結、バックエンド呼出なし
+- 認証基盤は MVP 撤廃（2026-05-02、user 指示）。マルチユーザー対応時に Cognito で復活予定（`TODO_construction.md` で park）
+- バックエンドへの API 呼出は user_id を request body / header に含めて送る方式
 
 ---
 
@@ -203,7 +208,6 @@ flowchart TB
     Frontend[Frontend SPA<br/>S3+CloudFront]
     APIGW_REST[API Gateway REST]
     APIGW_WS[API Gateway WebSocket]
-    Cognito[認証基盤<br/>Cognito]
     Agent[ダメ・ラボ Agent<br/>Lambda + Bedrock]
     PuppetLevel[傀儡度 Lambda]
     Polly[音声 UI<br/>Polly + S3]
@@ -213,7 +217,6 @@ flowchart TB
 
     Frontend -->|REST| APIGW_REST
     Frontend <-->|WebSocket| APIGW_WS
-    Frontend -.->|認証| Cognito
 
     APIGW_REST --> Agent
     APIGW_REST --> PuppetLevel
@@ -229,7 +232,6 @@ flowchart TB
     Polly -->|push| APIGW_WS
     APIGW_WS --> Frontend
 
-    Cognito -.Authorizer.-> APIGW_REST
 ```
 
 > **Mermaid syntax 注**: 上記は GitHub / GitLab 互換の Mermaid flowchart 構文。`fenced code block + mermaid` で描画される。

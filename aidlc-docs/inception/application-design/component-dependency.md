@@ -9,23 +9,23 @@
 
 行のコンポーネントが、列のコンポーネントに **依存する**（直接呼び出す or データを介して連動）関係を `→` で示す。
 
-| 呼出元 ＼ 呼出先 | フロント | 認証 | API GW | Agent | PuppetLevel | 共通基盤 (DDB/EB) | 音声 UI | 外部送信 |
-|---|---|---|---|---|---|---|---|---|
-| **フロント SPA** | — | → | → | (経由) | (経由) | — | (受信) | — |
-| **認証基盤 (Cognito)** | — | — | (Authorizer) | — | — | — | — | — |
-| **API Gateway** | — | (Authorizer) | — | → | → | (WebSocket → DDB) | — | — |
-| **ダメ・ラボ Agent** | — | — | — | — | — | → | → | → |
-| **傀儡度** | — | — | — | — | — | → | — | — |
-| **共通基盤 (EventBridge cron)** | — | — | — | → (sweep) | — | — | — | — |
-| **音声 UI** | (push) | — | (WS post) | — | — | → (DDB 接続情報) | — | — |
-| **外部メッセージング送信** | — | — | — | — | — | → (ログ DDB) | — | — |
+| 呼出元 ＼ 呼出先 | フロント | API GW | Agent | PuppetLevel | 共通基盤 (DDB/EB) | 音声 UI | 外部送信 |
+|---|---|---|---|---|---|---|---|
+| **フロント SPA** | — | → | (経由) | (経由) | — | (受信) | — |
+| **API Gateway** | — | — | → | → | (WebSocket → DDB) | — | — |
+| **ダメ・ラボ Agent** | — | — | — | — | → | → | → |
+| **傀儡度** | — | — | — | — | → | — | — |
+| **共通基盤 (EventBridge cron)** | — | — | → (sweep) | — | — | — | — |
+| **音声 UI** | (push) | (WS post) | — | — | → (DDB 接続情報) | — | — |
+| **外部メッセージング送信** | — | — | — | — | → (ログ DDB) | — | — |
 
 凡例:
 - `→`: 直接依存（同期 / 非同期問わず能動的に呼出）
 - `(経由)`: API Gateway 経由で間接的に到達
 - `(受信)`: 受動的に push を受ける
-- `(Authorizer)`: API Gateway での JWT 検証時に Cognito を参照
 - `(WS post)`: API Gateway Management API でのコネクションへのメッセージ送信
+
+> **MVP では認証基盤撤廃（2026-05-02）**: 元々は Cognito Authorizer 経由で API Gateway が JWT 検証していたが、MVP は単一デモユーザー前提のため認証基盤を撤廃。マルチユーザー対応時に復活予定（`TODO_construction.md` で park）。
 
 ---
 
@@ -144,7 +144,7 @@ sequenceDiagram
 
 | データ種別 | 主たる保存先 | 主たる読み手 |
 |---|---|---|
-| ユーザープロファイル | Cognito User Pool + DynamoDB `Users` | 全 Lambda |
+| ユーザープロファイル | DynamoDB `Users`（MVP は単一デモユーザー hardcoded、Cognito 撤廃） | 全 Lambda |
 | カテゴリ別 mode 状態 | DynamoDB `CategoryStates` | ダメ・ラボ Agent, 傀儡度 |
 | 選択ログ | DynamoDB `ChoiceLogs` | ダメ・ラボ Agent (書込), 傀儡度 (読) |
 | 自律実行報告 | DynamoDB `SingularityReports` | ダメ・ラボ Agent (書込), 傀儡度 (読), 音声 UI (URL 参照) |

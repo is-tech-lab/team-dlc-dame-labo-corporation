@@ -131,3 +131,42 @@ Construction フェーズの **Application Design** または **Functional Desig
 ## 履歴（追記）
 
 - 2026-05-02 夜: 外部チャネル拡張（LINE/SES）と Speech-to-Speech を park（Application Design Follow-up C-8b / C-5a を受けて）
+
+---
+
+## 認証基盤（Cognito）の追加 — マルチユーザー対応時
+
+**項目**: AWS Cognito User Pool + API Gateway Authorizer + JWT 検証 + フロント認証フローの追加実装。
+
+**MVP の状態**: **撤廃済み**（2026-05-02、user 指示）。決勝プレゼンでマルチユーザーを訴求しないため、単一デモユーザー（hardcoded `userId = "demo-user-001"`）+ 名前のローカルストレージ保持で代用。
+
+**なぜ park**:
+- 決勝（6/26）プレゼンの訴求軸はマルチユーザーではなく『1 人のユーザーが 3 回で傀儡化される』ナラティブ
+- Cognito User Pool セットアップ / Authorizer 設定 / JWT 検証 / パスワード忘れ画面実装は MVP の 8 日締切に対して負担が大きい
+- Discovery Mock も既に「名前入力 → ローカル保持」で動作実証済、世界観に支障なし
+- 撤廃により API Gateway Authorizer / Cognito 関連 IAM / CDK Stack が 1 つ消えてインフラ単純化
+
+**いつ判断**:
+予選通過後または本サービスを真に公開する段階で復帰。具体的には:
+- 複数ユーザーが触れる公開デモ環境を用意する場合
+- 自己決定能力スコアの累積データを user 単位で保持する場合
+- 「やっといたよ」音声報告のクロス user 比較を行う場合
+
+**開かれた質問**:
+- Cognito Hosted UI を使うか、独自 UI で SDK 直叩きか
+- ソーシャルログイン（Google / Apple）を当初から入れるか後付けか
+- MFA は必要か（決勝で『傀儡化されることを承諾するセキュリティ』のメタジョーク化も可）
+- 既存の hardcoded `userId` を Cognito sub に置き換える migration 戦略
+
+**参考**:
+- 関連ドキュメント:
+  - `aidlc-docs/inception/requirements/requirements.md` Appendix B.9（認証基盤の MVP 撤廃）
+  - `aidlc-docs/inception/user-stories/stories.md` Appendix B.7（Story 1.1 簡易化）
+  - `aidlc-docs/inception/application-design/components.md`（§5 境界の明示）
+  - `aidlc-docs/inception/plans/unit-of-work-plan.md`（§0 注記）
+
+---
+
+## 履歴（追記）
+
+- 2026-05-02 夜: 認証基盤（Cognito）の追加を park（決勝プレゼンでマルチユーザー訴求なしのため MVP 撤廃決定を受けて）

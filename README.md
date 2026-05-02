@@ -65,7 +65,7 @@ AI が自律的にすべてを実行する到達点。
 | 音声 | Polly TTS + S3 + WebSocket 配信 |
 | 永続化 | DynamoDB（CategoryStates / ChoiceLogs / SingularityReports） |
 | スケジューラ | EventBridge（cron + デモボタン） |
-| 認証 | Cognito User Pool |
+| セッション | 名前入力でセッション開始（ローカルストレージ保持、MVP は単一デモユーザー） |
 | 外部送信 | Slack Web API（専用 workspace 限定、const ホワイトリスト + DRY_RUN モード） |
 
 詳細は **[Application Design ドキュメント](./aidlc-docs/inception/application-design/application-design.md)** を参照。

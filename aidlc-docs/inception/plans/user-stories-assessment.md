@@ -14,7 +14,7 @@
 ### High Priority（ALWAYS Execute に該当）
 - [x] **New User Features**: 完全新規プロダクト
 - [x] **User Experience Changes**: 既存プロダクトの改修ではないが、新規ユーザー体験を一から構築する
-- [x] **Customer-Facing APIs**: 認証・サジェスチョン取得・委譲アクション送信などのユーザー対面エンドポイントを設計する
+- [x] **Customer-Facing APIs**: ~~認証・~~サジェスチョン取得・委譲アクション送信などのユーザー対面エンドポイントを設計する（**認証は 2026-05-02 MVP 撤廃**、requirements.md Appendix B.9 参照）
 - [x] **Complex Business Logic**: Phase 1〜4 の状態遷移、3 種類の委譲アクション、自動判定トリガー、Phase 4 自律実行など複雑なビジネスロジックを内包
 - [x] **Cross-Team Projects**: 企画・FE・BE・AI/ML の 4 領域協業に共通言語が必要
 

@@ -17,11 +17,12 @@
 |---|---|---|---|---|
 | 1 | **ダメ・ラボ Agent** | AI 中核 | 自我/シンギュラリティモード切替、提案生成、自律実行、context 推論 | Amazon Bedrock Agent (Claude) |
 | 2 | **傀儡度** | 機能 Unit | 選択ログ集計、自己決定能力スコア算出、ダッシュボード描画 | Lambda + React component |
-| 3 | **認証基盤** | 横断 | ユーザー登録 / ログイン / セッション管理 / トークン発行 | Amazon Cognito (User Pool + Identity Pool) |
-| 4 | **共通基盤** | 横断 | API Gateway, Lambda 共通レイヤ, DynamoDB データストア, EventBridge スケジューラ | API Gateway (REST + WebSocket), Lambda Layer, DynamoDB, EventBridge |
-| 5 | **音声 UI** | 横断 | Polly TTS 音声合成、WebSocket push 配信、フロント再生 | Amazon Polly + API Gateway WebSocket |
-| 6 | **フロントエンド SPA** | プレゼンテーション | ユーザー操作受付、画面描画、認証連携、音声再生 | Vite + React + React Router (S3 + CloudFront) |
-| 7 | **外部メッセージング送信** | 統合 | **Slack のみ** への返信代行送信、ホワイトリスト + DRY_RUN 制御 | Lambda + Slack Web API |
+| 3 | **共通基盤** | 横断 | API Gateway, Lambda 共通レイヤ, DynamoDB データストア, EventBridge スケジューラ | API Gateway (REST + WebSocket), Lambda Layer, DynamoDB, EventBridge |
+| 4 | **音声 UI** | 横断 | Polly TTS 音声合成、WebSocket push 配信、フロント再生 | Amazon Polly + API Gateway WebSocket |
+| 5 | **フロントエンド SPA** | プレゼンテーション | ユーザー操作受付、画面描画、名前入力でセッション開始、音声再生 | Vite + React + React Router (S3 + CloudFront) |
+| 6 | **外部メッセージング送信** | 統合 | **Slack のみ** への返信代行送信、ホワイトリスト + DRY_RUN 制御 | Lambda + Slack Web API |
+
+> **MVP スコープ縮減（2026-05-02 user 指示）**: **認証基盤（Cognito）を MVP から撤廃**。決勝プレゼンでマルチユーザーをアピールしないため、単一デモユーザー（hardcoded `userId = "demo-user-001"` 等）+ 名前のローカルストレージ保持で代用。`TODO_construction.md` で park、マルチユーザー対応時に復帰。
 
 ---
 
@@ -81,35 +82,14 @@
 
 ---
 
-### 2.3 認証基盤
-
-**Purpose**: ユーザーのアカウント管理と API 認可。
-
-**Responsibilities**:
-- ユーザー登録（メールアドレス + パスワード、MVP は最小限）
-- ログイン / ログアウト / セッション管理
-- JWT トークン発行
-- API Gateway での認可（Cognito Authorizer）
-
-**Interfaces**:
-- 入力: Cognito Hosted UI / SDK 経由のフロントからの認証リクエスト
-- 出力: JWT トークン、ユーザー ID（sub）
-- 依存: なし（横断的最下層）
-
-**境界外**:
-- ソーシャルログイン（MVP では除外、書類審査後の予選で検討）
-- MFA（MVP では除外）
-
----
-
-### 2.4 共通基盤
+### 2.3 共通基盤
 
 **Purpose**: 全コンポーネントが共有するインフラレイヤ。API ルーティング、永続化、スケジューリングを提供。
 
 **Responsibilities**:
-- **API Gateway REST**: フロントからの同期 API ルーティング、Cognito Authorizer 統合
+- **API Gateway REST**: フロントからの同期 API ルーティング（MVP は認証なし、user_id は body / header のクエリパラメータで受け取る）
 - **API Gateway WebSocket**: 音声通知 push 用の永続接続管理（C-3a / C-5 で確定）
-- **Lambda 共通レイヤ**: ロギング、エラーハンドリング、Cognito ユーザー解決等の共通処理
+- **Lambda 共通レイヤ**: ロギング、エラーハンドリング、user_id 解決等の共通処理
 - **DynamoDB**: ユーザー / カテゴリ状態 / 選択ログ / 自律実行報告の永続化
 - **EventBridge**: シンギュラリティモード自律実行 cron + デモボタンからの即時イベント（C-4 = C 併用）
 
@@ -125,7 +105,7 @@
 
 ---
 
-### 2.5 音声 UI
+### 2.4 音声 UI
 
 **Purpose**: AI の自律実行報告を「相棒の声」としてユーザーに届ける。
 
@@ -141,13 +121,13 @@
 
 ---
 
-### 2.6 フロントエンド SPA
+### 2.5 フロントエンド SPA
 
 **Purpose**: ユーザー対面の Web アプリケーション。
 
 **Responsibilities**:
-- 画面描画（オンボーディング、カテゴリ選択、サジェスチョン、傀儡度、シンギュラリティモード画面）
-- Cognito SDK 経由の認証フロー
+- 画面描画（オンボーディング = 名前入力、カテゴリ選択、サジェスチョン、傀儡度、シンギュラリティモード画面）
+- 名前入力 → ローカルストレージ保持で簡易セッション開始（MVP 認証なし）
 - REST API 呼出（提案取得、選択イベント送信、傀儡度集計取得）
 - WebSocket 接続管理（シンギュラリティ突入時に接続、報告受信時に再生）
 - 音声プレイヤー（Web Audio API or HTMLAudioElement）
@@ -163,7 +143,7 @@
 
 ---
 
-### 2.7 外部メッセージング送信
+### 2.6 外部メッセージング送信
 
 **Purpose**: シンギュラリティモードでユーザーに代わって **Slack** に返信代行を実送信する。**ハッカソン MVP の最重要安全境界**。
 
@@ -201,9 +181,9 @@ const ALLOWED_SLACK_CHANNELS = ["C0XXXXX", "C0YYYYY"];
                               ↑↓ REST           ↑↓ WebSocket
               ┌───────────[共通基盤: API Gateway]───────────┐
               ↓                  ↓                            ↓
-      [認証基盤]         [ダメ・ラボ Agent]              [傀儡度]
-      (Cognito)              ↓     ↓                            ↓
-                             ↓     ↓                            ↓
+              ↓        [ダメ・ラボ Agent]              [傀儡度]
+              ↓             ↓     ↓                            ↓
+              ↓             ↓     ↓                            ↓
                        [音声 UI] [外部メッセージング送信]   [DynamoDB]
                        (Polly)   (Slack only)                 (集計)
                              ↑                                  ↑
@@ -223,7 +203,6 @@ PBT-01「Property Identification During Design」は **Construction の Function
 |---|---|---|
 | ダメ・ラボ Agent | ✅ 対象 | Invariant（提案数=4）、Idempotence（同じ context で同じ提案）、Oracle（hardcoded 期待値との照合） |
 | 傀儡度 | ✅ 対象 | Invariant（集計の合計が選択ログ数と一致）、Round-trip（書込→読出で値保存） |
-| 認証基盤 | ⚠️ 限定（Cognito 自体は外部、wrapper のみ） | N/A（外部 SaaS） |
 | 共通基盤 | ✅ 対象（DynamoDB アクセス層） | Round-trip（保存→取得 = 入力）、Invariant（PK/SK 一意性） |
 | 音声 UI | ⚠️ 限定（Polly 自体は外部） | Invariant（音声 URL 形式） |
 | フロントエンド SPA | ❌ 対象外 | UI ロジックは traditional テストで十分 |
@@ -239,6 +218,6 @@ PBT-01「Property Identification During Design」は **Construction の Function
 - マルチエージェント協調（Profile Agent 復活時に検討、`TODO_construction.md` で park 中）
 - 嗜好学習（hardcoded 代替で MVP 対応）
 - 非同期バッチ集計（C-6 = A で却下）
-- ソーシャルログイン / MFA
+- 認証基盤（Cognito、ソーシャルログイン、MFA、JWT 検証）— 2026-05-02 撤廃、`TODO_construction.md` で park
 - ネイティブモバイル
 - Phase 1〜3 の段階的 UX（Discovery Mock リファクタで撤廃済、自我 / シンギュラリティ の 2 モード + 3 回 auto-graduate に統一、`requirements.md` Appendix B.2 参照）

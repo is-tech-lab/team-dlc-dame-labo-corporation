@@ -16,7 +16,7 @@
 | 影響領域 | 該当 | 詳細 |
 | --- | --- | --- |
 | **User-facing changes** | ✅ | Web UI（サジェスチョン画面・ミラー）+ 音声 UI（イヤホン経由）の新規構築 |
-| **Structural changes** | ✅ | 3 エージェント + 1 機能 Unit + 認証 + データレイヤーのアーキテクチャを新規定義 |
+| **Structural changes** | ✅ | 3 エージェント + 1 機能 Unit + 認証 + データレイヤーのアーキテクチャを新規定義（2026-05-02 に MVP では 1 Agent 統合 + 認証撤廃 + 4-6 Unit 構成に変更、各 Appendix B 参照） |
 | **Data model changes** | ✅ | プロファイル、選択ログ、委譲履歴、フェーズ状態のスキーマを新規設計 |
 | **API changes** | ✅ | サジェスチョン取得、選択送信、委譲アクション、ミラー集計 などの API を新規定義 |
 | **NFR impact** | ✅ | パフォーマンス（応答時間）、セキュリティ最低限、PBT 全強制（NFR-4）、AWS コスト管理（NFR-2） |
@@ -45,7 +45,7 @@
 | プロファイル・エージェント | AI Agent | FR-4, FR-5 | Story 2.5, 3.5 |
 | 委譲＆実行エージェント | AI Agent | FR-3, FR-9 | Epic 4, Story 2.4, 3.4 |
 | ミラー・ビュー | 非 AI（集計＋UI） | FR-7 | Epic 5 |
-| 認証基盤 | Infrastructure | FR-8 | Story 1.1 |
+| ~~認証基盤~~ | ~~Infrastructure~~ | ~~FR-8~~ | ~~Story 1.1~~（**2026-05-02 MVP 撤廃**、requirements.md Appendix B.9 / stories.md Appendix B.7 参照） |
 | 音声 UI（Polly 統合） | Cross-cutting | FR-6 | Story 2.4, 3.4, 各 Phase |
 | 共通基盤（API GW、Lambda scaffold、DynamoDB） | Infrastructure | NFR-1 | 全 Story の前提 |
 
@@ -129,7 +129,7 @@ flowchart TD
 - [x] User Stories — **COMPLETED & APPROVED** (2026-04-29)
 - [x] Workflow Planning — **IN PROGRESS**（本ドキュメント）
 - [ ] **Application Design — EXECUTE**
-  - **Rationale**: 3 エージェント + ミラー View + 認証基盤 + 音声 UI + 共通基盤の **コンポーネント境界とサービス層** を新規定義する必要がある。エージェント間の依存関係（プロファイル ↔ サジェスチョン ↔ 委譲＆実行）と、各コンポーネントのメソッド/責務を確定させなければ Code Generation に進めない
+  - **Rationale**: 1 Agent（ダメ・ラボ Agent、自我/シンギュラリティ mode-aware）+ 傀儡度 + 音声 UI + 共通基盤の **コンポーネント境界とサービス層** を新規定義する必要がある。各コンポーネントのメソッド/責務を確定させなければ Code Generation に進めない（**認証基盤は 2026-05-02 撤廃**、requirements.md Appendix B.9 参照）
 - [ ] **Units Generation — EXECUTE**
   - **Rationale**: 並行開発のため、システムを 4-5 個の独立した Unit に分解する必要がある。チーム 4 名で Unit を分担して並走実装するために必須
 
@@ -144,7 +144,7 @@ flowchart TD
 - [ ] **NFR Design — EXECUTE**（per-unit）
   - **Rationale**: NFR Requirements で定めた性能目標を達成するキャッシュ戦略・接続プール・Bedrock 並列呼び出しなどの設計
 - [ ] **Infrastructure Design — EXECUTE**（per-unit）
-  - **Rationale**: 各 Unit の AWS リソース（Lambda、DynamoDB、Bedrock AgentCore、Polly、Cognito、API Gateway、CloudFront）のマッピングと CDK/SAM スタック構成
+  - **Rationale**: 各 Unit の AWS リソース（Lambda、DynamoDB、Bedrock AgentCore、Polly、API Gateway、CloudFront）のマッピングと CDK/SAM スタック構成（**Cognito は 2026-05-02 MVP 撤廃**）
 - [ ] **Code Generation — EXECUTE**（per-unit、ALWAYS）
   - **Rationale**: 実装フェーズ
 - [ ] **Build and Test — EXECUTE**（after all units、ALWAYS）
@@ -162,7 +162,7 @@ Application Design / Units Generation の事前案。詳細は当該ステージ
 
 | Unit | 名称 | 責務概要 | 主担当（推奨） | 依存先 |
 | --- | --- | --- | --- | --- |
-| **Unit 0** | 共通基盤 | Cognito 認証、API Gateway、Lambda 共通レイヤー、DynamoDB スキーマ、CDK 基盤、CI/CD | BE / インフラ | — |
+| **Unit 0** | 共通基盤 | API Gateway、Lambda 共通レイヤー、DynamoDB スキーマ、CDK 基盤、CI/CD（**Cognito 認証は 2026-05-02 撤廃**） | BE / インフラ | — |
 | **Unit 1** | プロファイル・エージェント | 選択ログ集約、嗜好ベクトル更新、フェーズ自動判定 | AI/ML | Unit 0 |
 | **Unit 2** | サジェスチョン・エージェント | フェーズに応じた選択肢生成、選択ログ提出 | AI/ML + BE | Unit 0, Unit 1 |
 | **Unit 3** | 委譲＆実行エージェント | 委譲アクション処理、Phase 4 自律実行、Polly 音声報告 | BE + AI/ML | Unit 0, Unit 1 |

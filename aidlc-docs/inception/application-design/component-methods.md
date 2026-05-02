@@ -96,20 +96,7 @@ getCategoryDetail(
 
 ---
 
-## 3. 認証基盤
-
-```typescript
-// Cognito SDK のラッパとして提供（薄い）
-signUp(email: string, password: string): Promise<{ userId: string }>
-signIn(email: string, password: string): Promise<{ idToken: string; userId: string }>
-signOut(idToken: string): Promise<void>
-verifyToken(idToken: string): Promise<{ userId: string; expiresAt: Date }>
-```
-**目的**: Cognito User Pool 操作の共通化。詳細フローは Cognito SDK のドキュメントに従う。
-
----
-
-## 4. 共通基盤
+## 3. 共通基盤
 
 ### 4.1 DynamoDB アクセス層（責務分離のための薄いリポジトリ）
 
@@ -154,7 +141,7 @@ emitDemoTrigger(userId: string, categoryId: string): Promise<void>  // デモボ
 
 ---
 
-## 5. 音声 UI
+## 4. 音声 UI
 
 ```typescript
 synthesizeReport(
@@ -174,7 +161,7 @@ pushToUser(
 
 ---
 
-## 6. フロントエンド SPA
+## 5. フロントエンド SPA
 
 ### 6.1 主要画面の Props / State インターフェース（高レベル）
 
@@ -205,7 +192,7 @@ class ApiClient {
 
 ---
 
-## 7. 外部メッセージング送信
+## 6. 外部メッセージング送信
 
 > **MVP スコープ**: Slack のみ（LINE / SES は park）。
 
@@ -238,13 +225,12 @@ const ALLOWED_SLACK_CHANNELS: readonly string[];
 
 ---
 
-## 8. メソッド一覧サマリ表
+## 7. メソッド一覧サマリ表
 
 | Component | Public Methods 数（高レベル） |
 |---|---|
 | ダメ・ラボ Agent | 4 (generateSuggestions, recordChoice, runSingularityAction, delegateCompletely) |
 | 傀儡度 | 2 (getPuppetLevelSummary, getCategoryDetail) |
-| 認証基盤 | 4 (signUp, signIn, signOut, verifyToken) |
 | 共通基盤 - Repo 群 | ~14 (Repo 5 種 × 2-4 メソッド) |
 | 共通基盤 - EventBridge | 2 (scheduleSingularitySweep, emitDemoTrigger) |
 | 音声 UI | 2 (synthesizeReport, pushToUser) |

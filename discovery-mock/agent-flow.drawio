@@ -1,219 +1,161 @@
-<mxfile host="app.diagrams.net">
+<mxfile host="Electron">
   <diagram id="agent-flow" name="Agent Flow">
-    <mxGraphModel dx="1600" dy="1200" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1700" pageHeight="1300" math="0" shadow="0">
+    <mxGraphModel dx="2293" dy="1154" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1700" pageHeight="1300" math="0" shadow="0">
       <root>
-        <mxCell id="0"/>
-        <mxCell id="1" parent="0"/>
-
-        <!-- TITLE -->
-        <mxCell id="title" value="エージェントの動き&#10;Discovery Mock &amp; 想定アーキテクチャ&#10;(MVP: 2 Agent / 2 Mode 構成、HIL)" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;fontSize=20;fontStyle=1;" vertex="1" parent="1">
-          <mxGeometry x="450" y="20" width="800" height="80" as="geometry"/>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="title" parent="1" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;fontSize=20;fontStyle=1;" value="エージェントの動き&#xa;Discovery Mock &amp; 想定アーキテクチャ&#xa;(MVP: 1 Agent / 2 Mode 構成、HIL)" vertex="1">
+          <mxGeometry height="80" width="800" x="450" y="20" as="geometry" />
         </mxCell>
-
-        <!-- LEGEND -->
-        <mxCell id="legend-box" value="" style="rounded=1;fillColor=#fafafa;strokeColor=#999;dashed=0;" vertex="1" parent="1">
-          <mxGeometry x="40" y="120" width="340" height="220" as="geometry"/>
+        <mxCell id="legend-box" parent="1" style="rounded=1;fillColor=#fafafa;strokeColor=#999;dashed=0;" value="" vertex="1">
+          <mxGeometry height="240" width="340" x="40" y="120" as="geometry" />
         </mxCell>
-        <mxCell id="legend-title" value="Legend" style="text;html=1;align=left;verticalAlign=middle;fontSize=13;fontStyle=1;" vertex="1" parent="1">
-          <mxGeometry x="56" y="126" width="100" height="22" as="geometry"/>
+        <mxCell id="legend-title" parent="1" style="text;html=1;align=left;verticalAlign=middle;fontSize=13;fontStyle=1;" value="Legend" vertex="1">
+          <mxGeometry height="22" width="100" x="56" y="126" as="geometry" />
         </mxCell>
-        <mxCell id="legend-l1" value="① Active モード — AI 提案 (青)" style="text;html=1;align=left;fontSize=12;fontColor=#1f4ea8;" vertex="1" parent="1">
-          <mxGeometry x="56" y="150" width="310" height="20" as="geometry"/>
+        <mxCell id="legend-l1" parent="1" style="text;html=1;align=left;fontSize=12;fontColor=#1f4ea8;" value="① Active モード — AI 提案 (青)" vertex="1">
+          <mxGeometry height="20" width="310" x="56" y="150" as="geometry" />
         </mxCell>
-        <mxCell id="legend-l2" value="② 委譲アクション (紫)" style="text;html=1;align=left;fontSize=12;fontColor=#7a3aa8;" vertex="1" parent="1">
-          <mxGeometry x="56" y="172" width="310" height="20" as="geometry"/>
+        <mxCell id="legend-l2" parent="1" style="text;html=1;align=left;fontSize=12;fontColor=#7a3aa8;" value="② 委譲アクション (紫)" vertex="1">
+          <mxGeometry height="20" width="310" x="56" y="172" as="geometry" />
         </mxCell>
-        <mxCell id="legend-l3" value="③ Autonomous モード — 自律実行 (赤)" style="text;html=1;align=left;fontSize=12;fontColor=#c53030;" vertex="1" parent="1">
-          <mxGeometry x="56" y="194" width="310" height="20" as="geometry"/>
+        <mxCell id="legend-l3" parent="1" style="text;html=1;align=left;fontSize=12;fontColor=#c53030;" value="③ Autonomous モード — 自律実行 (赤)" vertex="1">
+          <mxGeometry height="20" width="310" x="56" y="194" as="geometry" />
         </mxCell>
-        <mxCell id="legend-l4" value="④ ミラー集計 (緑)" style="text;html=1;align=left;fontSize=12;fontColor=#2e7d4f;" vertex="1" parent="1">
-          <mxGeometry x="56" y="216" width="310" height="20" as="geometry"/>
+        <mxCell id="legend-l4" parent="1" style="text;html=1;align=left;fontSize=12;fontColor=#2e7d4f;" value="④ ミラー集計 (緑)" vertex="1">
+          <mxGeometry height="20" width="310" x="56" y="216" as="geometry" />
         </mxCell>
-        <mxCell id="legend-mvp-note" value="MVP 設計:&#10;・Profile Agent 除外 (将来構想 TODO_construction.md)&#10;・Phase 概念を user 面から撤廃&#10;・Active モードは常に「4 提案 + 自由記載」&#10;・Autonomous モードは完全委譲後の自律実行のみ&#10;・HIL: AI 提案 → user 選択、 wizard 入力なし" style="text;html=1;align=left;fontSize=11;fontStyle=2;fontColor=#888;" vertex="1" parent="1">
-          <mxGeometry x="56" y="240" width="310" height="92" as="geometry"/>
+        <mxCell id="legend-mvp-note" parent="1" style="text;html=1;align=left;fontSize=11;fontStyle=2;fontColor=#888;" value="MVP 設計:&#xa;・Profile Agent 除外 (TODO_construction.md)&#xa;・Suggestion + Delegation&amp;Execution を 1 Agent に統合&#xa;・Phase 概念を user 面から撤廃&#xa;・Active モードは常に「4 提案 + 自由記載」&#xa;・Autonomous モードは完全委譲後の自律実行のみ&#xa;・HIL: AI 提案 → user 選択、 wizard 入力なし" vertex="1">
+          <mxGeometry height="108" width="310" x="56" y="240" as="geometry" />
         </mxCell>
-
-        <!-- USER MODE BOX -->
-        <mxCell id="active-mode-label" value="Active モード (user が AI と対話)" style="text;html=1;align=left;verticalAlign=middle;fontSize=14;fontStyle=1;fontColor=#1f4ea8;" vertex="1" parent="1">
-          <mxGeometry x="420" y="120" width="320" height="30" as="geometry"/>
+        <mxCell id="active-mode-label" parent="1" style="text;html=1;align=left;verticalAlign=middle;fontSize=14;fontStyle=1;fontColor=#1f4ea8;" value="Active モード (user が AI と対話)" vertex="1">
+          <mxGeometry height="30" width="320" x="420" y="120" as="geometry" />
         </mxCell>
-
-        <mxCell id="active-mode-frame" value="" style="rounded=1;fillColor=#f5f9fd;strokeColor=#a8c0e0;dashed=0;fontSize=10;" vertex="1" parent="1">
-          <mxGeometry x="420" y="150" width="640" height="220" as="geometry"/>
+        <mxCell id="active-mode-frame" parent="1" style="rounded=1;fillColor=#f5f9fd;strokeColor=#a8c0e0;dashed=0;fontSize=10;" value="" vertex="1">
+          <mxGeometry height="220" width="640" x="420" y="150" as="geometry" />
         </mxCell>
-
-        <mxCell id="trigger-user" value="① ユーザー応答 (HIL)&#10;AI 提案 4 つから選ぶ&#10;or 自由記載 / 委譲ボタン" style="rounded=1;whiteSpace=wrap;fillColor=#dae5f2;strokeColor=#4a6fa5;fontSize=12;fontStyle=1;" vertex="1" parent="1">
-          <mxGeometry x="440" y="180" width="240" height="80" as="geometry"/>
+        <mxCell id="trigger-user" parent="1" style="rounded=1;whiteSpace=wrap;fillColor=#dae5f2;strokeColor=#4a6fa5;fontSize=12;fontStyle=1;" value="① ユーザー応答 (HIL)&#xa;AI 提案 4 つから選ぶ&#xa;or 自由記載 / 委譲ボタン" vertex="1">
+          <mxGeometry height="80" width="240" x="440" y="180" as="geometry" />
         </mxCell>
-
-        <mxCell id="trigger-deleg" value="② 委譲ボタン押下&#10;単発委譲 / 完全委譲" style="rounded=1;whiteSpace=wrap;fillColor=#e8d5f2;strokeColor=#7a3aa8;fontSize=12;fontStyle=1;" vertex="1" parent="1">
-          <mxGeometry x="800" y="180" width="240" height="80" as="geometry"/>
+        <mxCell id="trigger-deleg" parent="1" style="rounded=1;whiteSpace=wrap;fillColor=#e8d5f2;strokeColor=#7a3aa8;fontSize=12;fontStyle=1;" value="② 委譲ボタン押下&#xa;単発委譲 / 完全委譲" vertex="1">
+          <mxGeometry height="80" width="240" x="800" y="180" as="geometry" />
         </mxCell>
-
-        <mxCell id="output-suggestion" value="AI 提案 (常に 4 つ + 自由記載欄)&#10;単発委譲時は AI が 4 つから 1 つ選択 → 同画面に表示" style="rounded=1;whiteSpace=wrap;fillColor=#cce5ff;strokeColor=#1f4ea8;fontSize=11;fontStyle=1;align=center;" vertex="1" parent="1">
-          <mxGeometry x="440" y="280" width="600" height="60" as="geometry"/>
+        <mxCell id="output-suggestion" parent="1" style="rounded=1;whiteSpace=wrap;fillColor=#cce5ff;strokeColor=#1f4ea8;fontSize=11;fontStyle=1;align=center;" value="AI 提案 (常に 4 つ + 自由記載欄)&#xa;単発委譲時は AI が 4 つから 1 つ選択 → 同画面に表示" vertex="1">
+          <mxGeometry height="60" width="600" x="440" y="280" as="geometry" />
         </mxCell>
-
-        <!-- AUTONOMOUS MODE BOX -->
-        <mxCell id="autonomous-mode-label" value="Autonomous モード (完全委譲後、AI 自律実行)" style="text;html=1;align=left;verticalAlign=middle;fontSize=14;fontStyle=1;fontColor=#c53030;" vertex="1" parent="1">
-          <mxGeometry x="1100" y="120" width="450" height="30" as="geometry"/>
+        <mxCell id="autonomous-mode-label" parent="1" style="text;html=1;align=left;verticalAlign=middle;fontSize=14;fontStyle=1;fontColor=#c53030;" value="Autonomous モード (完全委譲後、AI 自律実行)" vertex="1">
+          <mxGeometry height="30" width="450" x="1100" y="120" as="geometry" />
         </mxCell>
-
-        <mxCell id="autonomous-mode-frame" value="" style="rounded=1;fillColor=#fdf5f6;strokeColor=#e0a8b0;dashed=0;fontSize=10;" vertex="1" parent="1">
-          <mxGeometry x="1100" y="150" width="500" height="220" as="geometry"/>
+        <mxCell id="autonomous-mode-frame" parent="1" style="rounded=1;fillColor=#fdf5f6;strokeColor=#e0a8b0;dashed=0;fontSize=10;" value="" vertex="1">
+          <mxGeometry height="220" width="500" x="1100" y="150" as="geometry" />
         </mxCell>
-
-        <mxCell id="trigger-sched" value="③ EventBridge スケジュール&#10;(自発代行: 誕生日リマインド / サブスク見直し /&#10;日用品補充 等)" style="rounded=1;whiteSpace=wrap;fillColor=#f2d8de;strokeColor=#c53030;fontSize=11;fontStyle=1;" vertex="1" parent="1">
-          <mxGeometry x="1120" y="160" width="220" height="80" as="geometry"/>
+        <mxCell id="trigger-sched" parent="1" style="rounded=1;whiteSpace=wrap;fillColor=#f2d8de;strokeColor=#c53030;fontSize=11;fontStyle=1;" value="③ EventBridge スケジュール&#xa;(自発代行: 誕生日リマインド / サブスク見直し /&#xa;日用品補充 等)" vertex="1">
+          <mxGeometry height="80" width="220" x="1120" y="160" as="geometry" />
         </mxCell>
-
-        <mxCell id="trigger-inbox" value="③ 受信トリガー&#10;(LINE/Slack/メール 着信、&#10;Amazon カート / セール通知 等、受信代行)" style="rounded=1;whiteSpace=wrap;fillColor=#f2d8de;strokeColor=#c53030;fontSize=11;fontStyle=1;" vertex="1" parent="1">
-          <mxGeometry x="1360" y="160" width="220" height="80" as="geometry"/>
+        <mxCell id="trigger-inbox" parent="1" style="rounded=1;whiteSpace=wrap;fillColor=#f2d8de;strokeColor=#c53030;fontSize=11;fontStyle=1;" value="③ 受信トリガー&#xa;(LINE/Slack/メール 着信、&#xa;Amazon カート / セール通知 等、受信代行)" vertex="1">
+          <mxGeometry height="80" width="220" x="1360" y="160" as="geometry" />
         </mxCell>
-
-        <mxCell id="output-voice" value="音声報告&#10;「やっといたよ：お母さんに返信しといた」&#10;「カートの本買っといた」「サブスク 2 つ解約しといた」" style="rounded=1;whiteSpace=wrap;fillColor=#f8b6c0;strokeColor=#c53030;fontSize=11;fontStyle=1;align=center;" vertex="1" parent="1">
-          <mxGeometry x="1120" y="270" width="460" height="70" as="geometry"/>
+        <mxCell id="output-voice" parent="1" style="rounded=1;whiteSpace=wrap;fillColor=#f8b6c0;strokeColor=#c53030;fontSize=11;fontStyle=1;align=center;" value="音声報告&#xa;「やっといたよ：お母さんに返信しといた」&#xa;「カートの本買っといた」「サブスク 2 つ解約しといた」" vertex="1">
+          <mxGeometry height="70" width="460" x="1120" y="270" as="geometry" />
         </mxCell>
-
-        <!-- AGENT ROW -->
-        <mxCell id="agent-row-label" value="Agents (MVP: 2 つだけ)" style="text;html=1;align=left;verticalAlign=middle;fontSize=14;fontStyle=1;fontColor=#666;" vertex="1" parent="1">
-          <mxGeometry x="40" y="420" width="200" height="30" as="geometry"/>
+        <mxCell id="agent-row-label" parent="1" style="text;html=1;align=left;verticalAlign=middle;fontSize=14;fontStyle=1;fontColor=#666;" value="Agent (MVP: 1 つに統合)" vertex="1">
+          <mxGeometry height="30" width="200" x="40" y="420" as="geometry" />
         </mxCell>
-
-        <mxCell id="agent-suggest" value="サジェスチョン Agent&#10;&#10;責務 (Active モード):&#10;• 観察データから context 推論 (内部処理)&#10;• 推論 context に基づき選択肢生成 (Bedrock 呼出)&#10;• 常に 4 つの提案を返す&#10;• 単発委譲時は 4 つから 1 つ選んで返す&#10;• 選択ログ作成 (DynamoDB 書込)&#10;• MVP: hardcoded、本番: 実 LINE/Slack/EC 連携" style="rounded=1;whiteSpace=wrap;fillColor=#cce5ff;strokeColor=#1f4ea8;fontSize=11;fontStyle=1;align=left;verticalAlign=top;spacingLeft=10;spacingTop=10;" vertex="1" parent="1">
-          <mxGeometry x="420" y="450" width="400" height="220" as="geometry"/>
+        <mxCell id="agent-suggest" parent="1" style="rounded=1;whiteSpace=wrap;fillColor=#e3d5f0;strokeColor=#5a3a8a;fontSize=11;fontStyle=1;align=left;verticalAlign=top;spacingLeft=10;spacingTop=10;" value="ダメ・ラボ Agent (単一)&#xa;&#xa;責務 (mode に応じて切替):&#xa;&#xa;【Active モード】&#xa;• 観察データから context 推論 (内部処理)&#xa;• 常に 4 提案 + 自由記載欄 を返す (Bedrock 呼出)&#xa;• 単発委譲時は 4 つから 1 つ選んで返す&#xa;• 選択ログ作成 (DynamoDB 書込)&#xa;&#xa;【Autonomous モード】&#xa;• 委譲アクション処理 (DynamoDB 書込)&#xa;• 受信代行 (来た連絡 / カート / 通知への応答)&#xa;• 自発代行 (誕生日リマインド / サブスク見直し / 日用品補充 等の AI 発)&#xa;• Bedrock 自律判断 + Polly 音声報告生成&#xa;&#xa;MVP: context 推論は hardcoded、本番: 実 LINE/Slack/EC 連携" vertex="1">
+          <mxGeometry height="320" width="540" x="600" y="450" as="geometry" />
         </mxCell>
-
-        <mxCell id="agent-deleg" value="委譲＆実行 Agent&#10;&#10;責務 (Autonomous モード):&#10;• 委譲アクション処理 (DynamoDB 書込)&#10;• 受信代行 (来た連絡 / カート / 通知への応答)&#10;• 自発代行 (誕生日リマインド / サブスク見直し /&#10;  日用品補充 等の AI 発)&#10;• Bedrock 自律判断 + Polly 音声報告生成" style="rounded=1;whiteSpace=wrap;fillColor=#f2d8de;strokeColor=#c53030;fontSize=11;fontStyle=1;align=left;verticalAlign=top;spacingLeft=10;spacingTop=10;" vertex="1" parent="1">
-          <mxGeometry x="1140" y="450" width="400" height="220" as="geometry"/>
+        <mxCell id="agent-merged-note" parent="1" style="text;html=1;align=center;fontSize=10;fontStyle=2;fontColor=#888;" value="⚠ 当初は 2 Agent 構成 (サジェスチョン + 委譲＆実行) だったが&#xa;Discovery Mock のチームレビュー後 (2026-05-02) に MVP として 1 つに統合。&#xa;将来 (Construction 以降) で再分離する余地あり (TODO_construction.md 参照)" vertex="1">
+          <mxGeometry height="50" width="540" x="600" y="780" as="geometry" />
         </mxCell>
-
-        <!-- DATA / EXTERNAL ROW -->
-        <mxCell id="data-row-label" value="Data &amp; External" style="text;html=1;align=left;verticalAlign=middle;fontSize=14;fontStyle=1;fontColor=#666;" vertex="1" parent="1">
-          <mxGeometry x="40" y="700" width="160" height="30" as="geometry"/>
+        <mxCell id="data-row-label" parent="1" style="text;html=1;align=left;verticalAlign=middle;fontSize=14;fontStyle=1;fontColor=#666;" value="Data &amp; External" vertex="1">
+          <mxGeometry height="30" width="160" x="40" y="700" as="geometry" />
         </mxCell>
-
-        <mxCell id="ext-bedrock-1" value="Bedrock&#10;(LLM / Agent Core)&#10;選択肢生成" style="rounded=1;whiteSpace=wrap;fillColor=#fde6c4;strokeColor=#d68a3a;fontSize=11;fontStyle=1;" vertex="1" parent="1">
-          <mxGeometry x="440" y="730" width="200" height="60" as="geometry"/>
+        <mxCell id="ext-bedrock-1" parent="1" style="rounded=1;whiteSpace=wrap;fillColor=#fde6c4;strokeColor=#d68a3a;fontSize=11;fontStyle=1;" value="Bedrock&#xa;(LLM / Agent Core)&#xa;選択肢生成" vertex="1">
+          <mxGeometry height="60" width="200" x="440" y="730" as="geometry" />
         </mxCell>
-
-        <mxCell id="data-dynamo" value="DynamoDB&#10;&#10;• 選択ログ&#10;• 委譲履歴&#10;• Mode 状態 (active / autonomous)&#10;• (将来) Profile" style="shape=cylinder3;whiteSpace=wrap;fillColor=#e0e0e0;strokeColor=#666;fontSize=11;fontStyle=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
-          <mxGeometry x="800" y="710" width="240" height="120" as="geometry"/>
+        <mxCell id="data-dynamo" parent="1" style="shape=cylinder3;whiteSpace=wrap;fillColor=#e0e0e0;strokeColor=#666;fontSize=11;fontStyle=1;align=center;verticalAlign=middle;" value="DynamoDB&#xa;&#xa;• 選択ログ&#xa;• 委譲履歴&#xa;• Mode 状態 (active / autonomous)&#xa;• (将来) Profile" vertex="1">
+          <mxGeometry height="120" width="240" x="800" y="710" as="geometry" />
         </mxCell>
-
-        <mxCell id="ext-bedrock-2" value="Bedrock&#10;(自律判断)" style="rounded=1;whiteSpace=wrap;fillColor=#fde6c4;strokeColor=#d68a3a;fontSize=11;fontStyle=1;" vertex="1" parent="1">
-          <mxGeometry x="1140" y="730" width="180" height="60" as="geometry"/>
+        <mxCell id="ext-bedrock-2" parent="1" style="rounded=1;whiteSpace=wrap;fillColor=#fde6c4;strokeColor=#d68a3a;fontSize=11;fontStyle=1;" value="Bedrock&#xa;(自律判断)" vertex="1">
+          <mxGeometry height="60" width="180" x="1140" y="730" as="geometry" />
         </mxCell>
-
-        <mxCell id="ext-polly" value="Amazon Polly&#10;(TTS)" style="rounded=1;whiteSpace=wrap;fillColor=#fde6c4;strokeColor=#d68a3a;fontSize=11;fontStyle=1;" vertex="1" parent="1">
-          <mxGeometry x="1340" y="730" width="180" height="60" as="geometry"/>
+        <mxCell id="ext-polly" parent="1" style="rounded=1;whiteSpace=wrap;fillColor=#fde6c4;strokeColor=#d68a3a;fontSize=11;fontStyle=1;" value="Amazon Polly&#xa;(TTS)" vertex="1">
+          <mxGeometry height="60" width="180" x="1340" y="730" as="geometry" />
         </mxCell>
-
-        <!-- USER OUTPUTS -->
-        <mxCell id="output-earphone" value="ユーザーのイヤホン&#10;(Autonomous モードの一方向通知)" style="rounded=1;whiteSpace=wrap;fillColor=#f5f5f5;strokeColor=#888;fontSize=12;" vertex="1" parent="1">
-          <mxGeometry x="1140" y="860" width="380" height="60" as="geometry"/>
+        <mxCell id="output-earphone" parent="1" style="rounded=1;whiteSpace=wrap;fillColor=#f5f5f5;strokeColor=#888;fontSize=12;" value="ユーザーのイヤホン&#xa;(Autonomous モードの一方向通知)" vertex="1">
+          <mxGeometry height="60" width="380" x="1140" y="860" as="geometry" />
         </mxCell>
-
-        <!-- MIRROR -->
-        <mxCell id="mirror-label" value="Mirror View (非 AI、集計のみ)" style="text;html=1;align=left;verticalAlign=middle;fontSize=14;fontStyle=1;fontColor=#666;" vertex="1" parent="1">
-          <mxGeometry x="40" y="940" width="320" height="30" as="geometry"/>
+        <mxCell id="mirror-label" parent="1" style="text;html=1;align=left;verticalAlign=middle;fontSize=14;fontStyle=1;fontColor=#666;" value="Mirror View (非 AI、集計のみ)" vertex="1">
+          <mxGeometry height="30" width="320" x="40" y="940" as="geometry" />
         </mxCell>
-
-        <mxCell id="mirror-view" value="ミラー・ビュー&#10;集計クエリ + ダッシュボード&#10;(自己決定 vs 委譲推移、自己決定能力スコア)" style="rounded=1;whiteSpace=wrap;fillColor=#daedde;strokeColor=#2e7d4f;fontSize=11;fontStyle=1;align=center;" vertex="1" parent="1">
-          <mxGeometry x="800" y="980" width="240" height="80" as="geometry"/>
+        <mxCell id="mirror-view" parent="1" style="rounded=1;whiteSpace=wrap;fillColor=#daedde;strokeColor=#2e7d4f;fontSize=11;fontStyle=1;align=center;" value="ミラー・ビュー&#xa;集計クエリ + ダッシュボード&#xa;(自己決定 vs 委譲推移、自己決定能力スコア)" vertex="1">
+          <mxGeometry height="80" width="240" x="800" y="980" as="geometry" />
         </mxCell>
-
-        <mxCell id="mirror-browser" value="ユーザー Web 画面&#10;堕落の可視化を見る" style="rounded=1;whiteSpace=wrap;fillColor=#f5f5f5;strokeColor=#888;fontSize=12;" vertex="1" parent="1">
-          <mxGeometry x="440" y="990" width="200" height="60" as="geometry"/>
+        <mxCell id="mirror-browser" parent="1" style="rounded=1;whiteSpace=wrap;fillColor=#f5f5f5;strokeColor=#888;fontSize=12;" value="ユーザー Web 画面&#xa;堕落の可視化を見る" vertex="1">
+          <mxGeometry height="60" width="200" x="440" y="990" as="geometry" />
         </mxCell>
-
-        <!-- =============== EDGES =============== -->
-
-        <!-- Active mode flow -->
-        <mxCell id="e1-1" value="①" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#1f4ea8;strokeWidth=2;fontSize=14;fontStyle=1;fontColor=#1f4ea8;" edge="1" parent="1" source="trigger-user" target="agent-suggest">
-          <mxGeometry relative="1" as="geometry"/>
+        <mxCell id="e1-1" edge="1" parent="1" source="trigger-user" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#1f4ea8;strokeWidth=2;fontSize=14;fontStyle=1;fontColor=#1f4ea8;" target="agent-suggest" value="①">
+          <mxGeometry relative="1" as="geometry" />
         </mxCell>
-
-        <mxCell id="e1-2" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#1f4ea8;strokeWidth=2;" edge="1" parent="1" source="agent-suggest" target="ext-bedrock-1">
-          <mxGeometry relative="1" as="geometry"/>
+        <mxCell id="e1-2" edge="1" parent="1" source="agent-suggest" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#1f4ea8;strokeWidth=2;" target="ext-bedrock-1" value="">
+          <mxGeometry relative="1" as="geometry" />
         </mxCell>
-
-        <mxCell id="e1-3" value="4 提案返却" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#1f4ea8;strokeWidth=2;fontSize=11;fontColor=#1f4ea8;" edge="1" parent="1" source="agent-suggest" target="output-suggestion">
-          <mxGeometry relative="1" as="geometry"/>
+        <mxCell id="e1-3" edge="1" parent="1" source="agent-suggest" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#1f4ea8;strokeWidth=2;fontSize=11;fontColor=#1f4ea8;" target="output-suggestion" value="4 提案返却">
+          <mxGeometry relative="1" as="geometry" />
         </mxCell>
-
-        <mxCell id="e1-4" value="選択ログ書込" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#1f4ea8;strokeWidth=2;fontSize=11;fontColor=#1f4ea8;" edge="1" parent="1" source="agent-suggest" target="data-dynamo">
-          <mxGeometry relative="1" as="geometry"/>
+        <mxCell id="e1-4" edge="1" parent="1" source="agent-suggest" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#1f4ea8;strokeWidth=2;fontSize=11;fontColor=#1f4ea8;" target="data-dynamo" value="選択ログ書込">
+          <mxGeometry relative="1" as="geometry" />
         </mxCell>
-
-        <!-- Inbox observation feeds Suggestion Agent (Active mode context) -->
-        <mxCell id="e-observe" value="観察データ&#10;(Active 用 context)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#1f4ea8;strokeWidth=2;dashed=1;fontSize=11;fontColor=#1f4ea8;" edge="1" parent="1" source="trigger-inbox" target="agent-suggest">
+        <mxCell id="e-observe" edge="1" parent="1" source="trigger-inbox" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#1f4ea8;strokeWidth=2;dashed=1;fontSize=11;fontColor=#1f4ea8;" target="agent-suggest" value="観察データ&#xa;(Active 用 context)">
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
-              <mxPoint x="1470" y="260"/>
-              <mxPoint x="820" y="260"/>
-              <mxPoint x="820" y="450"/>
+              <mxPoint x="1470" y="260" />
+              <mxPoint x="820" y="260" />
+              <mxPoint x="820" y="450" />
             </Array>
           </mxGeometry>
         </mxCell>
-
-        <!-- Delegation flow -->
-        <mxCell id="e2-1" value="②" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#7a3aa8;strokeWidth=2;fontSize=14;fontStyle=1;fontColor=#7a3aa8;" edge="1" parent="1" source="trigger-deleg" target="agent-deleg">
+        <mxCell id="e2-1" edge="1" parent="1" source="trigger-deleg" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#7a3aa8;strokeWidth=2;fontSize=14;fontStyle=1;fontColor=#7a3aa8;" target="agent-suggest" value="②">
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
-              <mxPoint x="920" y="400"/>
-              <mxPoint x="1340" y="400"/>
+              <mxPoint x="920" y="400" />
+              <mxPoint x="1340" y="400" />
             </Array>
           </mxGeometry>
         </mxCell>
-
-        <mxCell id="e2-2" value="履歴 / Mode 状態更新" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#7a3aa8;strokeWidth=2;fontSize=11;fontColor=#7a3aa8;" edge="1" parent="1" source="agent-deleg" target="data-dynamo">
-          <mxGeometry relative="1" as="geometry"/>
+        <mxCell id="e2-2" edge="1" parent="1" source="agent-suggest" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#7a3aa8;strokeWidth=2;fontSize=11;fontColor=#7a3aa8;" target="data-dynamo" value="履歴 / Mode 状態更新">
+          <mxGeometry relative="1" as="geometry" />
         </mxCell>
-
-        <!-- Autonomous mode flow -->
-        <mxCell id="e3-1" value="③" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#c53030;strokeWidth=2;fontSize=14;fontStyle=1;fontColor=#c53030;" edge="1" parent="1" source="trigger-sched" target="agent-deleg">
-          <mxGeometry relative="1" as="geometry"/>
+        <mxCell id="e3-1" edge="1" parent="1" source="trigger-sched" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#c53030;strokeWidth=2;fontSize=14;fontStyle=1;fontColor=#c53030;" target="agent-suggest" value="③">
+          <mxGeometry relative="1" as="geometry" />
         </mxCell>
-
-        <mxCell id="e3-2" value="③" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#c53030;strokeWidth=2;fontSize=14;fontStyle=1;fontColor=#c53030;" edge="1" parent="1" source="trigger-inbox" target="agent-deleg">
-          <mxGeometry relative="1" as="geometry"/>
+        <mxCell id="e3-2" edge="1" parent="1" source="trigger-inbox" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#c53030;strokeWidth=2;fontSize=14;fontStyle=1;fontColor=#c53030;" target="agent-suggest" value="③">
+          <mxGeometry relative="1" as="geometry" />
         </mxCell>
-
-        <mxCell id="e3-3" value="自律判断 LLM 呼出" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#c53030;strokeWidth=2;fontSize=11;fontColor=#c53030;" edge="1" parent="1" source="agent-deleg" target="ext-bedrock-2">
-          <mxGeometry relative="1" as="geometry"/>
+        <mxCell id="e3-3" edge="1" parent="1" source="agent-suggest" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#c53030;strokeWidth=2;fontSize=11;fontColor=#c53030;" target="ext-bedrock-2" value="自律判断 LLM 呼出">
+          <mxGeometry relative="1" as="geometry" />
         </mxCell>
-
-        <mxCell id="e3-4" value="音声合成" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#c53030;strokeWidth=2;fontSize=11;fontColor=#c53030;" edge="1" parent="1" source="agent-deleg" target="ext-polly">
-          <mxGeometry relative="1" as="geometry"/>
+        <mxCell id="e3-4" edge="1" parent="1" source="agent-suggest" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#c53030;strokeWidth=2;fontSize=11;fontColor=#c53030;" target="ext-polly" value="音声合成">
+          <mxGeometry relative="1" as="geometry" />
         </mxCell>
-
-        <mxCell id="e3-5" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#c53030;strokeWidth=2;" edge="1" parent="1" source="ext-polly" target="output-voice">
-          <mxGeometry relative="1" as="geometry"/>
+        <mxCell id="e3-5" edge="1" parent="1" source="ext-polly" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#c53030;strokeWidth=2;" target="output-voice" value="">
+          <mxGeometry relative="1" as="geometry" />
         </mxCell>
-
-        <mxCell id="e3-6" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#c53030;strokeWidth=2;" edge="1" parent="1" source="output-voice" target="output-earphone">
-          <mxGeometry relative="1" as="geometry"/>
+        <mxCell id="e3-6" edge="1" parent="1" source="output-voice" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#c53030;strokeWidth=2;" target="output-earphone" value="">
+          <mxGeometry relative="1" as="geometry" />
         </mxCell>
-
-        <mxCell id="e3-7" value="Mode 状態 / 履歴 read" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#c53030;strokeWidth=2;fontSize=11;fontColor=#c53030;dashed=1;" edge="1" parent="1" source="data-dynamo" target="agent-deleg">
-          <mxGeometry relative="1" as="geometry"/>
+        <mxCell id="e3-7" edge="1" parent="1" source="data-dynamo" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#c53030;strokeWidth=2;fontSize=11;fontColor=#c53030;dashed=1;" target="agent-suggest" value="Mode 状態 / 履歴 read">
+          <mxGeometry relative="1" as="geometry" />
         </mxCell>
-
-        <!-- Mirror flow -->
-        <mxCell id="e4-1" value="④ 集計クエリ" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#2e7d4f;strokeWidth=2;fontSize=11;fontColor=#2e7d4f;" edge="1" parent="1" source="data-dynamo" target="mirror-view">
-          <mxGeometry relative="1" as="geometry"/>
+        <mxCell id="e4-1" edge="1" parent="1" source="data-dynamo" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#2e7d4f;strokeWidth=2;fontSize=11;fontColor=#2e7d4f;" target="mirror-view" value="④ 集計クエリ">
+          <mxGeometry relative="1" as="geometry" />
         </mxCell>
-
-        <mxCell id="e4-2" value="ダッシュボード描画" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#2e7d4f;strokeWidth=2;fontSize=11;fontColor=#2e7d4f;" edge="1" parent="1" source="mirror-view" target="mirror-browser">
-          <mxGeometry relative="1" as="geometry"/>
+        <mxCell id="e4-2" edge="1" parent="1" source="mirror-view" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#2e7d4f;strokeWidth=2;fontSize=11;fontColor=#2e7d4f;" target="mirror-browser" value="ダッシュボード描画">
+          <mxGeometry relative="1" as="geometry" />
         </mxCell>
-
-        <!-- Mode transition arrow: complete delegation switches mode -->
-        <mxCell id="e-mode-transition" value="完全委譲で Mode 遷移" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#7a3aa8;strokeWidth=2;dashed=1;fontSize=10;fontStyle=2;fontColor=#7a3aa8;" edge="1" parent="1" source="active-mode-frame" target="autonomous-mode-frame">
-          <mxGeometry relative="1" as="geometry"/>
+        <mxCell id="e-mode-transition" edge="1" parent="1" source="active-mode-frame" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#7a3aa8;strokeWidth=2;dashed=1;fontSize=10;fontStyle=2;fontColor=#7a3aa8;" target="autonomous-mode-frame" value="完全委譲で Mode 遷移">
+          <mxGeometry relative="1" as="geometry" />
         </mxCell>
-
       </root>
     </mxGraphModel>
   </diagram>

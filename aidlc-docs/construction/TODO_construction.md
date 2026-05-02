@@ -43,6 +43,36 @@ Construction フェーズの **NFR Requirements / Infrastructure Design** の段
 
 ---
 
+### [ ] エージェント構成の再分離検討（2026-05-02 提起）
+
+**何を**:
+MVP では 3 エージェント構成（サジェスチョン / プロファイル / 委譲＆実行）を **1 つに統合した「ダメ・ラボ Agent」** で実装。Construction 以降のスケール / 責務分離の必要性が見えてきた段階で、再分離するかを評価する。
+
+**なぜ**:
+- MVP の単純化のため統合したが、本番運用ではエージェントごとに**異なる Bedrock モデル / プロンプト / 権限境界**を割り当てたい場面が出る可能性が高い
+- 特に「自律実行」の権限（外部 API 呼び出し、メッセージ送信）は user 対話とは別の最小権限境界に分離した方がセキュリティ的に望ましい
+- Profile Agent 復活（前項）と合わせて、再分離するなら Inception で議論した 3 エージェント構成へ戻す選択肢が自然
+
+**いつ判断**:
+Construction フェーズの **Application Design** または **Functional Design** 段階で、Unit 分解と合わせて再評価。
+
+**開かれた質問**:
+- 統合のままで本番デプロイに進めるか、それとも分離が必要か（運用観点）
+- Bedrock の同一 Agent で mode 切替（Active / Autonomous）する設計と、Bedrock 上で別 Agent を立てる設計の比較
+- IAM Role の分離粒度（user 対話 Lambda と autonomous 実行 Lambda は別 Role が望ましい？）
+- Profile Agent 復活時の連結パターン（Supervisor / Orchestrator / Event-driven、`application-design-plan.md` Question C-1 を再活用）
+
+**MVP では統合した理由**:
+- Discovery Mock のチームレビュー後（2026-05-02）、HIL 設計と相性的に「単一 Agent が mode で切替」が最も単純
+- エージェント間通信 / オーケストレーターの実装コストが MVP には過剰
+- 書類審査・予選では「動くデモ」が優先、再分離は本番運用検討に持ち越し
+
+**参考**:
+- 関連ドキュメント: `aidlc-docs/inception/plans/application-design-plan.md` §0 / Question C-1 / C-2、`requirements.md` Appendix B.4、`discovery-mock/agent-flow.drawio` 中央の単一 Agent box
+
+---
+
 ## 履歴
 
 - 2026-04-30: 初版作成。Nix flake 項目を park（チーム代表 高木氏起点の議論）
+- 2026-05-02: エージェント構成の再分離検討を park（Discovery Mock チームレビュー後の 1 Agent 統合決定を受けて）

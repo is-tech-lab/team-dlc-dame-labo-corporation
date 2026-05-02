@@ -311,6 +311,14 @@ ISO 8601 形式（JST, +09:00）でタイムスタンプを記録する。
 
 ---
 
+## エージェント 1 本化の上流反映（HIL リファクタ後のチーム議論）
+**Timestamp**: 2026-05-02T17:30:00+09:00
+**User Input**: "ごめーーーーん、mock がfix した時のチームの議論だと、エージェントはもう１つにまとめちゃおうという話だった。これを上流フローに反映させて。あと application-design の answer がある .md にも反映させて。なぜならマルチエージェントの前提だったため"
+**AI Response**: "Discovery Mock チームレビュー後の決定『エージェント 3 → 1 に統合』を 4 ファイルに反映:\n\n1. `aidlc-docs/inception/plans/application-design-plan.md`:\n   - §0「既に確定している論理コンポーネント」: 3 エージェント記述の前に MVP 設計更新ノート挿入、'AI エージェント (MVP: 1 個に統合)' で「ダメ・ラボ Agent」記述追加。当初 3 エージェント分割は「将来構想として park」と再ラベル\n   - §1 Question C-1 マルチエージェント連結パターン: moot 化注記 + 選択肢 Z）'MVP では適用外（単一エージェント構成のため moot）' を追加、`[Answer]: Z` を pre-fill\n   - §2 Question C-2 エージェント間データ受け渡し方式: 同様に moot 化注記 + Z 選択肢 + `[Answer]: Z` を pre-fill\n\n2. `discovery-mock/agent-flow.drawio`:\n   - title: '2 Agent / 2 Mode' → '1 Agent / 2 Mode'\n   - agent-row-label: 'Agents (MVP: 2 つだけ)' → 'Agent (MVP: 1 つに統合)'\n   - agent-suggest を「ダメ・ラボ Agent (単一)」に rename・拡大、責務に Active モード + Autonomous モード両方を記述\n   - agent-deleg cell を削除、参照していた edge は全て agent-suggest にリダイレクト (sed 全置換)\n   - 統合経緯を note (agent-merged-note) で説明: '当初 2 Agent → Discovery レビュー後に 1 つに統合、将来再分離余地あり (TODO_construction.md 参照)'\n   - legend-mvp-note: 'Suggestion + Delegation&Execution を 1 Agent に統合' を追加、box 高さ拡張\n\n3. `aidlc-docs/inception/requirements/requirements.md` Appendix B.4:\n   - 'MVP では除外' (Profile Agent のみの記述) → '3 → 1 に統合（Profile 除外 + 残り 2 つも統合）' に拡張\n   - 更新の経緯を 3 段階で明記: 当初 3 → (4/30) Profile 除外で 2 → (5/2) 残り 2 つ統合で 1\n\n4. `aidlc-docs/construction/TODO_construction.md`:\n   - 新規 park 項目「エージェント構成の再分離検討」を追加（Construction フェーズの Application Design / Functional Design で再評価する観点を park）\n   - 履歴行を 1 件追加\n\n本文（§8.1 等のチーム合作 3 エージェント記述）は完全に温存、append-only / 注記のみで MVP override を追加。"
+**Context**: Discovery Mock fix 後のチーム議論を上流ドキュメントに反映、エージェント 3 → 1 統合の整合化
+
+---
+
 ## MVP Override Appendix の追加（上流ドキュメントの整合性担保）
 **Timestamp**: 2026-05-02T16:30:00+09:00
 **User Input**: "DLC 的には、上流のフローもメンテナンスする必要があるが、矛盾がないように修正してくれたの？" → "A でよろしく"

@@ -550,3 +550,11 @@ ISO 8601 形式（JST, +09:00）でタイムスタンプを記録する。
 **Context**: public リポジトリ化前の最終監査。セルフプロトタイピング戦略に基づく実名 / 業務情報 / 雇用主クレジット明文化を意図的開示として確定。AI-DLC 透明性とハッカソン評価軸を優先。
 
 ---
+
+## プロダクト名の正式確定: Puppet Me（ぱペみー）
+**Timestamp**: 2026-05-02T20:30:00+09:00
+**User Input**: "提出したんだけど、READMEのタイトルがおかしいw\n\nおっと、これだとプロダクト名もダメラボコーポレーションなので、ここのread meだけ直しても良いかなって思うけどどうでしょう？\n「書き直し候補」\n修正前：ダメラボコーポレーション\n修正後：プロダクト名：puppet me（ぱペみー）↑\npuppet meは直訳で「傀儡にしてくれ」で、略もいいのでこれでどうでしょう？" → "b" → "提出しちゃったんだけど、repository名も変えた方がいいかな？"
+**AI Response**: "プロダクト名を **Puppet Me（ぱペみー）** に正式確定。\n\n[ネーミングの妥当性評価]\n- ブランド動詞「ギュラれる」(memory: project_brand_verb_gyurareru.md) と完全整合: Puppet Me = 直訳『傀儡にしてくれ』= 一人称命令形\n- Verb Me テック界隈ネーミング (Read Me / Pay Me / Slack Me 系統) で親しみやすく検索性◎\n- チーム名『ダメ・ラボ・コーポレーション』とプロダクト名『Puppet Me』の分離が成立 (Apple 社 / iPhone 構造)\n\n[反映先 = (b) 戦略]\n- README.md: 旧『# ダメ・ラボ・コーポレーション』→『# Puppet Me（ぱペみー）』。チーム名とプロダクト名の関係を冒頭で明示\n- requirements.md: 冒頭『プロダクト名（仮）』行に Appendix B.11 への forward reference を追記、Appendix B.11 を新規作成（命名根拠 / 反映先 / 不変箇所を documenting）、改訂履歴 4 行目追加\n\n[リポジトリ名は変更しない判断]\n- 提出済 URL (https://github.com/is-tech-lab/team-dlc-dame-labo-corporation) が rename で永続 redirect 保証なし、書類審査員アクセス時の 404 / 警告リスク回避\n- リポジトリ名 = team-dlc-dame-labo-corporation はハッカソンチームの正式名であり、プロダクト名とは別レイヤー\n- 『ダメ・ラボ・コーポレーション』というチーム名そのものに『自分達自身がダメになる実験室』というセルフプロトタイピング戦略のメタファー価値あり、捨てるのは惜しい\n\n[変更しなかった箇所]\n- 下流 Application Design / Units Generation / discovery-mock: プロダクト名そのものを参照する箇所は限定的、世界観タグライン / モード名 / Unit 名 はそのまま機能\n- 要件定義本文 §1〜§12 (Appendix B 以外): append-only 戦略で温存\n- audit.md 過去エントリ: 履歴のため不変"
+**Context**: 書類審査提出後の README タイトル違和感を起点とした命名確定。リポジトリ名は team 名として温存。下流文書への波及は最小限 (Appendix B.11 forward reference のみ)。
+
+---

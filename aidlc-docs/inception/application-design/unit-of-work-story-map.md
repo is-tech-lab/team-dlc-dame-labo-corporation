@@ -104,18 +104,20 @@
 - Lambda Common Layer（user_id 解決、Repo 抽象化）
 - IAM / CDK Stack
 
-### Unit-B: ダメ・ラボ Agent（j-ichikawa）
+### Unit-B: ダメ・ラボ Agent on Bedrock AgentCore（j-ichikawa）
 
-| Story | 内容 |
-|---|---|
-| 1.3 | 初回サジェスチョン受領（4 提案生成） |
-| 2.4 / 3.4 | やっといたよ音声報告（自律判断） |
-| 4.1 | 単発委譲（AI が 1 つ選ぶ） |
-| 4.3 | 完全委譲（即時シンギュラリティ遷移判定） |
-| **X.1** | 3 回トレーニング後 auto-graduate（SELF_DECISION_LIMIT = 3 ロジック） |
-| **X.2** | 単発委譲時の AI 選択結果表示（選択 + 表示） |
-| **X.3** | シンギュラリティ突入後の自動初回発火 |
-| **X.4** | 自由記載 input（テキスト処理） |
+> **実装基盤**: Amazon Bedrock AgentCore Runtime + AgentCore Gateway + AgentCore Memory + AgentCore Observability。Agent 本体は AgentCore Runtime（コンテナ）にホスト、tools は AgentCore Gateway 経由で呼ばれる Lambda 関数として実装。
+
+| Story | 内容 | AgentCore コンポーネント |
+|---|---|---|
+| 1.3 | 初回サジェスチョン受領（4 提案生成） | Runtime（自我モード instruction）+ Bedrock model |
+| 2.4 / 3.4 | やっといたよ音声報告（自律判断） | Runtime（シンギュラリティモード）+ Gateway tools (synthesize-report / send-slack-message) |
+| 4.1 | 単発委譲（AI が 1 つ選ぶ） | Runtime + Bedrock model |
+| 4.3 | 完全委譲（即時シンギュラリティ遷移判定） | Runtime + Gateway tool (set-mode) |
+| **X.1** | 3 回トレーニング後 auto-graduate | Gateway tool (record-choice、SELF_DECISION_LIMIT = 3 ロジック内蔵) |
+| **X.2** | 単発委譲時の AI 選択結果表示 | Runtime + Bedrock model（透明性確保で選択 proposalId 返却） |
+| **X.3** | シンギュラリティ突入後の自動初回発火 | EventBridge → invoke-wrapper → Runtime（1.5 秒タイマー後の発火） |
+| **X.4** | 自由記載 input | Runtime（textarea 入力を context として処理） |
 
 ### Unit-C: 傀儡度 BE（水口）
 

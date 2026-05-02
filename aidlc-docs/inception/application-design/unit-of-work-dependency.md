@@ -43,69 +43,86 @@
 
 | パターン | 採用先 | プロトコル | 同期/非同期 |
 |---|---|---|---|
-| F → A → B / C / D / E | 全 REST API（提案 / 選択 / 委譲 / 傀儡度 / デモトリガ） | HTTPS REST | 同期 |
+| F → A → invoke-wrapper → B (AgentCore) | 全 REST API（提案 / 選択 / 委譲） | HTTPS REST | 同期 |
+| F → A → C / D handlers | 傀儡度 / デモトリガ | HTTPS REST | 同期 |
 | F ↔ A (WebSocket) | 音声報告 push | WSS | 非同期 push |
 | Unit (Lambda) → A (DynamoDB) | 全永続化 | AWS SDK | 同期 |
-| B → Bedrock | Claude 推論呼出 | AWS SDK | 同期 |
+| **invoke-wrapper Lambda → AgentCore Runtime** | InvokeAgent API | AWS SDK | 同期 |
+| **AgentCore Runtime → AgentCore Gateway tools** | tool 呼出（record-choice / set-mode / query-category-state / invoke-singularity-action / send-slack-message / synthesize-report） | AgentCore 内部 | 同期 |
+| **AgentCore Runtime ↔ AgentCore Memory** | session 短期記憶 / 長期記憶 | AgentCore 内部 | 同期 |
+| **AgentCore Runtime → Bedrock model** | Claude 推論 | AgentCore 内部 | 同期 |
 | D → Polly | TTS 合成 | AWS SDK | 同期 |
 | D → S3 | 音声ファイル保存 | AWS SDK | 同期 |
 | D → A (WebSocket Management API) | フロントへ push | AWS SDK | 同期 |
-| EventBridge → A → B | cron sweep + デモ即時 | EventBridge | 非同期 (best-effort) |
-| B → E (Slack) | 外部送信 | Lambda invoke | 同期（or async） |
-| E → Slack Web API | 送信実行 | HTTPS API | 同期 |
+| EventBridge → A → invoke-wrapper → B | cron sweep + デモ即時 | EventBridge → AgentCore | 非同期 (best-effort) |
+| Slack 送信 tool (E) → Slack Web API | 送信実行 | HTTPS API | 同期 |
 
 ---
 
 ## 3. データフロー図
 
-### 3.1 自我モード フロー（Story 1.3 / 4.1 / X.2 / X.4）
+### 3.1 自我モード フロー（Story 1.3 / 4.1 / X.2 / X.4） — AgentCore 経由
 
 ```mermaid
 sequenceDiagram
     actor User
     participant F as Unit-F<br/>フロント
     participant A as Unit-A<br/>API Gateway
-    participant B as Unit-B<br/>Agent Lambda
+    participant W as invoke-wrapper<br/>Lambda
+    participant AC as AgentCore Runtime<br/>(Agent 本体)
+    participant Mem as AgentCore Memory
+    participant Tools as AgentCore Gateway<br/>(record-choice / set-mode 等)
     participant DDB as Unit-A<br/>DynamoDB
     participant Bedrock
 
     User->>F: 状況メッセージ入力 / 自由記載
     F->>A: POST /suggestions
-    A->>B: invoke generateSuggestions
-    B->>DDB: get CategoryStates
-    B->>Bedrock: 4 提案生成
-    Bedrock-->>B: proposals
-    B-->>F: {proposals (4), freeFormPrompt, modeState}
+    A->>W: invoke wrapper
+    W->>AC: InvokeAgent (mode=ego)
+    AC->>Mem: load session context
+    AC->>Tools: query-category-state
+    Tools->>DDB: get CategoryStates
+    Tools-->>AC: state
+    AC->>Bedrock: 4 提案生成 (system prompt = コアタグライン)
+    Bedrock-->>AC: proposals
+    AC->>Mem: save context
+    AC-->>W: {proposals (4), freeFormPrompt, modeState}
+    W-->>F: response
 
     User->>F: 提案選択 / 自由記載 / 委譲
     F->>A: POST /choices
-    A->>B: invoke recordChoice
-    B->>DDB: ChoiceLogs.append
+    A->>W: invoke wrapper
+    W->>AC: InvokeAgent (action=record-choice)
+    AC->>Tools: record-choice
+    Tools->>DDB: ChoiceLogs.append + selfDecisionCount++
     alt selfDecisionCount == 3 (X.1)
-        B->>DDB: setMode singularity
-        B->>A: emit EventBridge "graduated"
-        B-->>F: {graduated: true}
+        Tools->>DDB: setMode singularity
+        Tools-->>AC: {graduated: true}
+        AC->>A: emit EventBridge "graduated"
+        AC-->>W: {graduated: true}
         Note over F: シンギュラリティモード遷移<br/>1.5 秒後に X.3 自動発火
     else type == "delegate" (X.2)
-        B->>Bedrock: 1 つ選択
-        B-->>F: {graduated: false, aiPickedProposalId}
+        AC->>Bedrock: 1 つ選択
+        AC-->>W: {graduated: false, aiPickedProposalId}
         F->>F: AI 選択結果を表示
     else
-        B-->>F: {graduated: false}
+        AC-->>W: {graduated: false}
     end
+    W-->>F: response
 ```
 
-### 3.2 シンギュラリティモード フロー（Story 2.4 / 3.4 / 4.3 / X.3）
+### 3.2 シンギュラリティモード フロー（Story 2.4 / 3.4 / 4.3 / X.3） — AgentCore 経由
 
 ```mermaid
 sequenceDiagram
     participant EB as EventBridge
     participant Sweep as Sweep Lambda<br/>(Unit-A)
-    participant B as Unit-B<br/>Agent
-    participant Bedrock
-    participant E as Unit-E<br/>外部送信
+    participant W as invoke-wrapper<br/>Lambda
+    participant AC as AgentCore Runtime<br/>(Agent)
+    participant Mem as AgentCore Memory
+    participant SlackTool as Gateway tool:<br/>send-slack-message<br/>(Unit-E)
     participant Slack
-    participant D as Unit-D<br/>音声 UI
+    participant VoiceTool as Gateway tool:<br/>synthesize-report<br/>(Unit-D)
     participant Polly
     participant S3 as S3 audio-reports
     participant DDB as DynamoDB
@@ -115,25 +132,27 @@ sequenceDiagram
     EB->>Sweep: cron tick / demo trigger / X.3 graduated
     Sweep->>DDB: scan singularity categories
     loop 各 (userId, categoryId)
-        Sweep->>B: runSingularityAction
-        B->>Bedrock: 自律判断
-        Bedrock-->>B: action plan
-        B->>E: sendSlackMessage
-        E->>E: ホワイトリスト + DRY_RUN 検証
+        Sweep->>W: invoke wrapper (mode=singularity)
+        W->>AC: InvokeAgent
+        AC->>Mem: load category context
+        AC->>AC: 自律判断（Bedrock + system prompt）
+        AC->>SlackTool: send-slack-message
+        SlackTool->>SlackTool: ホワイトリスト + DRY_RUN 検証
         alt 許可済 + DRY_RUN=false
-            E->>Slack: chat.postMessage
-            Slack-->>E: ok
+            SlackTool->>Slack: chat.postMessage
+            Slack-->>SlackTool: ok
         else DRY_RUN=true
-            E-->>B: dry_run
+            SlackTool-->>AC: dry_run
         end
-        B->>D: synthesizeReport
-        D->>Polly: TTS 合成
-        Polly-->>D: audio bytes
-        D->>S3: put audio.mp3
-        D->>DDB: SingularityReports.append
-        D->>WS: pushToUser
+        AC->>VoiceTool: synthesize-report
+        VoiceTool->>Polly: TTS 合成
+        Polly-->>VoiceTool: audio bytes
+        VoiceTool->>S3: put audio.mp3
+        VoiceTool->>DDB: SingularityReports.append
+        VoiceTool->>WS: pushToUser
         WS->>F: {audioUrl, reportText, categoryId}
         F->>F: 音声プレイヤーで再生
+        AC->>Mem: save action history
     end
 ```
 
@@ -234,10 +253,13 @@ flowchart LR
         EB[EventBridge]
         Layer[Lambda Layer]
         IAM[IAM Roles]
+        AgentCore[Bedrock AgentCore<br/>Runtime + Memory + Gateway]
     end
 
     subgraph "Stack 2: AgentStack (Unit-B)"
-        AgentL[Agent Lambda]
+        Wrapper[invoke-wrapper Lambda]
+        Tools[AgentCore Gateway tools<br/>record-choice / set-mode /<br/>query-category-state /<br/>invoke-singularity-action]
+        Runtime[Agent Runtime container<br/>システムプロンプト + mode-router]
     end
 
     subgraph "Stack 3: PuppetLevelStack (Unit-C)"
@@ -245,12 +267,12 @@ flowchart LR
     end
 
     subgraph "Stack 4: VoiceUIStack (Unit-D)"
-        VoiceL[音声 UI Lambda]
+        VoiceL[音声 UI Lambda<br/>= AgentCore Gateway tool]
         S3A[(S3 audio)]
     end
 
     subgraph "Stack 5: ExternalMessagingStack (Unit-E)"
-        ExtL[外部送信 Lambda]
+        ExtL[外部送信 Lambda<br/>= AgentCore Gateway tool]
     end
 
     subgraph "Stack 6: FrontendStack (Unit-F)"

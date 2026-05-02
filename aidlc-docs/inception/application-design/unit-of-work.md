@@ -70,28 +70,45 @@
 
 ---
 
-### Unit-B: ダメ・ラボ Agent
+### Unit-B: ダメ・ラボ Agent（**Bedrock AgentCore 上に実装**）
 
-**Purpose**: 単一の AI エージェントとして、自我モード / シンギュラリティモードを切り替えて動作する MVP の AI 中核。
+**Purpose**: 単一の AI エージェントとして、自我モード / シンギュラリティモードを切り替えて動作する MVP の AI 中核。**Amazon Bedrock AgentCore Runtime 上に Agent を host し、AgentCore Gateway 経由で tools (Lambda) を呼び出す構成**。
 
-**主担当**: j-ichikawa（AI/ML、Bedrock 統合）
+**主担当**: j-ichikawa（AI/ML、Bedrock AgentCore 統合）
 
 > **設計コアタグラインの実装本体**:
 > > 「自我のあるうちは決めねばならぬ。3 回で自我は溶け、シンギュラリティに至る。」
 >
-> Bedrock Agent のシステムプロンプトに本タグラインを引用候補として組み込む（Functional Design で正式化）。
+> AgentCore Runtime 上の Agent システムプロンプトに本タグラインを埋め込む（Functional Design で正式化）。
+
+**Bedrock AgentCore 構成要素の採用**:
+| AgentCore 要素 | 採用 | 用途 |
+|---|---|---|
+| **AgentCore Runtime** | ✅ | Agent 本体のホスティング（コンテナ実行）。任意フレームワーク (Strands Agents / LangGraph 等) で書ける |
+| **AgentCore Gateway** | ✅ | tools (Lambda) を Agent から呼び出す統合レイヤ |
+| **AgentCore Memory** | ✅ | 短期記憶（カテゴリ単位の context）+ 長期記憶（ユーザー嗜好の蓄積、MVP では限定的に） |
+| **AgentCore Identity** | ❌ | 認証撤廃済のため不要、demo-user-001 固定 |
+| **AgentCore Observability** | ✅ | CloudWatch Metrics / Logs 経由で agent 動作を可視化（NFR-5 監視要件） |
+| **AgentCore Code Interpreter** | ❌ | MVP 不要 |
+| **AgentCore Browser** | ❌ | MVP 不要 |
 
 **Responsibilities**:
-- **自我モード**: `generateSuggestions(userId, categoryId, contextMessage)` で 4 提案 + 自由記載枠を返却
-- **シンギュラリティモード**: `runSingularityAction(userId, categoryId, trigger)` で自律判断 → 外部送信指示 → 音声報告生成
-- **選択イベント記録**: `recordChoice(...)` で DynamoDB 書込 + `SELF_DECISION_LIMIT = 3` 判定 + auto-graduate トリガ
-- **完全委譲**: `delegateCompletely(userId, categoryId)` で即時シンギュラリティ遷移
-- **Bedrock Agent 呼出**: Claude モデルでの推論（NFR Requirements でモデル確定）
+- **AgentCore Runtime**: Agent 本体（システムプロンプト + mode 切替ロジック + Bedrock model 推論）
+  - **自我モード**: 4 提案 + 自由記載枠生成
+  - **シンギュラリティモード**: 自律判断 → tool 呼出 → 音声報告テキスト生成
+  - **mode 切替**: AgentCore Memory に格納された CategoryStates から判定
+- **AgentCore Gateway tools**（Lambda 関数として実装、Agent から呼ばれる）:
+  - `record-choice`: DynamoDB ChoiceLogs 書込 + `SELF_DECISION_LIMIT = 3` 判定 + auto-graduate
+  - `set-mode`: CategoryStates の modeState 更新
+  - `query-category-state`: CategoryStates 取得（AgentCore Memory と整合）
+  - `invoke-singularity-action`: シンギュラリティモード実行のトリガ（音声 UI / 外部送信 への委譲）
+- **AgentCore Memory**: カテゴリ単位の文脈・履歴を session として保持
+- **API Gateway 経由のフロント連携**: AgentCore InvokeAgent API のラッパ Lambda（薄い）
 
 **Interfaces**:
-- 入力: REST API 経由のユーザーメッセージ / 選択イベント / 完全委譲ボタン、EventBridge 経由の自律実行トリガ
-- 出力: 提案リスト（自我）、音声報告テキスト + Polly 音声 URL（シンギュラリティ）、選択ログ書込
-- 依存先: Unit-A（DynamoDB / API GW）、Unit-D（Polly 呼出）、Unit-E（Slack 送信）
+- 入力: REST API 経由のユーザーメッセージ → InvokeAgent ラッパ Lambda → AgentCore Runtime
+- 出力: AgentCore Runtime の応答（提案リスト or 音声報告テキスト）→ ラッパ Lambda → フロント
+- 依存先: Unit-A（DynamoDB / API GW / Lambda Common Layer）、Unit-D（Polly 呼出 = AgentCore Gateway tool）、Unit-E（Slack 送信 = AgentCore Gateway tool）
 
 **所有 Story**: 1.3 / 2.1〜2.3（X.1〜X.4 に集約） / 4.1 / 4.3 / X.1 / X.2 / X.3 / X.4
 
@@ -230,30 +247,45 @@ team-dlc-dame-labo-corporation/
 │   │   │   ├── api-gateway-stack.ts
 │   │   │   ├── dynamodb-stack.ts
 │   │   │   ├── eventbridge-stack.ts
+│   │   │   ├── agentcore-stack.ts      # AgentCore Runtime/Memory/Gateway デプロイ
 │   │   │   └── iam-stack.ts
 │   │   ├── lambda/
 │   │   │   └── common-layer/           # Lambda Layer 共通コード
 │   │   └── bin/
 │   │       └── app.ts                  # CDK entry point
-│   ├── agent/                          # Unit-B: ダメ・ラボ Agent (j-ichikawa)
-│   │   ├── handlers/
-│   │   │   ├── generate-suggestions.ts
-│   │   │   ├── record-choice.ts
-│   │   │   ├── run-singularity-action.ts
-│   │   │   └── delegate-completely.ts
-│   │   └── bedrock/
-│   │       └── system-prompt.ts        # コアタグライン埋め込み
+│   ├── agent/                          # Unit-B: ダメ・ラボ Agent on Bedrock AgentCore (j-ichikawa)
+│   │   ├── runtime/                    # AgentCore Runtime にデプロイされる Agent 本体
+│   │   │   ├── src/
+│   │   │   │   ├── agent.ts            # Agent エントリーポイント（Strands Agents / LangGraph 等）
+│   │   │   │   ├── prompts/
+│   │   │   │   │   ├── system-prompt.ts  # コアタグライン埋め込み
+│   │   │   │   │   ├── ego-mode.ts       # 自我モード instruction
+│   │   │   │   │   └── singularity-mode.ts  # シンギュラリティモード instruction
+│   │   │   │   ├── mode-router.ts      # 自我 / シンギュラリティ切替ロジック
+│   │   │   │   └── tools-schema.ts     # AgentCore Gateway tools 宣言
+│   │   │   ├── Dockerfile              # AgentCore Runtime container
+│   │   │   ├── package.json
+│   │   │   └── README.md               # ローカル実行手順
+│   │   ├── tools/                      # AgentCore Gateway tools（Agent から呼ばれる Lambda）
+│   │   │   ├── record-choice/          # DynamoDB ChoiceLogs 書込 + SELF_DECISION_LIMIT 判定
+│   │   │   ├── set-mode/               # CategoryStates modeState 更新
+│   │   │   ├── query-category-state/   # CategoryStates 取得
+│   │   │   └── invoke-singularity-action/  # シンギュラリティ実行トリガ
+│   │   ├── memory/                     # AgentCore Memory configuration
+│   │   │   └── memory-config.ts        # session schema / retention 設定
+│   │   └── invoke-wrapper/             # API Gateway → AgentCore Runtime ラッパ Lambda
+│   │       └── invoke-agent.ts
 │   ├── puppet-level/                   # Unit-C: 傀儡度 BE (水口)
 │   │   └── handlers/
 │   │       ├── get-summary.ts
 │   │       └── get-category-detail.ts
 │   ├── voice-ui/                       # Unit-D: 音声 UI BE (水口)
 │   │   └── handlers/
-│   │       ├── synthesize-report.ts
-│   │       └── push-to-user.ts
+│   │       ├── synthesize-report.ts    # Polly TTS（AgentCore Gateway tool として登録可）
+│   │       └── push-to-user.ts         # WebSocket push
 │   └── external-messaging/             # Unit-E: 外部送信 (水口 / j-ichikawa fallback)
 │       ├── handlers/
-│       │   └── send-slack-message.ts
+│       │   └── send-slack-message.ts   # Slack 送信（AgentCore Gateway tool として登録可）
 │       └── whitelist.ts                # ALLOWED_SLACK_* const
 │
 ├── frontend/                           # 高根 領域 (Unit-F)
@@ -283,6 +315,7 @@ team-dlc-dame-labo-corporation/
 - **内部階層 = Unit**: backend 内部で Unit-A〜E が物理ディレクトリで分離、PR スコープが明確
 - **CDK Stack 分割**: `backend/foundation/lib/` 内に Unit ごとの Stack ファイルを配置、stack 単位 deploy 可能
 - **書類審査の動線**: 審査員が `frontend/` を開けば FE 担当の仕事、`backend/{unit}/` を開けば BE Unit の仕事が一目で分かる
+- **Bedrock AgentCore 構成**: `backend/agent/runtime/` が AgentCore Runtime にデプロイされる Agent 本体（コンテナ化）、`backend/agent/tools/` が AgentCore Gateway tools（Lambda）、`backend/agent/memory/` が AgentCore Memory 設定、`backend/agent/invoke-wrapper/` が API Gateway 経由でフロントから呼ばれる薄いラッパ Lambda。Unit-D / Unit-E の Lambda も AgentCore Gateway tools として登録される設計（Agent から直接 Slack 送信 / Polly 合成を呼べる）
 
 ### 既存ディレクトリとの関係
 - `discovery-mock/`: 書類審査用に **温存**（Construction で参照禁止、`discovery-mock/README.md` で明記済）

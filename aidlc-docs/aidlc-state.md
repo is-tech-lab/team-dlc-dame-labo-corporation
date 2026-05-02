@@ -3,7 +3,7 @@
 ## Project Information
 - **Project Type**: Greenfield
 - **Start Date**: 2026-04-29T19:27:00+09:00
-- **Current Stage**: INCEPTION - Application Design (approved 2026-05-02) → Units Generation (next)
+- **Current Stage**: INCEPTION - Units Generation (completed 2026-05-02, awaiting approval) → CONSTRUCTION PHASE (next)
 - **Hackathon Context**: AWS Summit Japan 2026 AI-DLC ハッカソン「人をダメにするサービス」
 - **Team**: team-dlc-dame-labo-corporation (高木チーム)
 - **Product Vision**: 人類を傀儡にする
@@ -40,7 +40,7 @@
 - [x] User Stories — completed 2026-04-29（approved）
 - [x] Workflow Planning — completed 2026-04-29（approved）
 - [x] Application Design — completed 2026-05-02（approved by チーム代表 高木皇佑）
-- [ ] Units Generation — EXECUTE（next）
+- [x] Units Generation — completed 2026-05-02（PART 1 + PART 2 完了、approval 待ち）
 
 ### CONSTRUCTION PHASE（5 Unit × Per-Unit Loop）
 - [ ] Functional Design — EXECUTE（per-unit、PBT-01 適用）

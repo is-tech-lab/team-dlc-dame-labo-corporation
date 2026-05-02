@@ -58,8 +58,8 @@ Construction フェーズの **Application Design** または **Functional Desig
 
 **開かれた質問**:
 - 統合のままで本番デプロイに進めるか、それとも分離が必要か（運用観点）
-- Bedrock の同一 Agent で mode 切替（Active / Autonomous）する設計と、Bedrock 上で別 Agent を立てる設計の比較
-- IAM Role の分離粒度（user 対話 Lambda と autonomous 実行 Lambda は別 Role が望ましい？）
+- Bedrock の同一 Agent で mode 切替（自我 / シンギュラリティ）する設計と、Bedrock 上で別 Agent を立てる設計の比較
+- IAM Role の分離粒度（user 対話 Lambda と シンギュラリティ実行 Lambda は別 Role が望ましい？）
 - Profile Agent 復活時の連結パターン（Supervisor / Orchestrator / Event-driven、`application-design-plan.md` Question C-1 を再活用）
 
 **MVP では統合した理由**:
@@ -111,7 +111,7 @@ Construction フェーズの **Application Design** または **Functional Desig
 **MVP の状態**: 音声出力（AI → user）のみ実装、音声入力（user → AI）は対象外。Application Design Follow-up C-5a（2026-05-02）で park 決定。
 
 **なぜ park**:
-- **世界観との衝突**: Phase 4 / Autonomous モードでは「ユーザーは何もしない、聞き流す」が本質。能動的に声で応答することは『傀儡化』『決めない快楽』テーマと矛盾する
+- **世界観との衝突**: Phase 4 / シンギュラリティモードでは「ユーザーは何もしない、聞き流す」が本質。能動的に声で応答することは『傀儡化』『決めない快楽』テーマと矛盾する
 - **スコープ超過**: Transcribe / Lex / Nova Sonic 等の音声入力コンポーネント追加で書類審査までの実装範囲を大幅に超える
 - **設計影響**: 音声入力を導入すると、音声で選択した内容を構造化選択（4 提案のうちどれか）に変換するロジック、マイク権限制御、エコーキャンセル等の追加考慮が必要
 

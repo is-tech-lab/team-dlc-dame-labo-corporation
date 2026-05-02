@@ -486,3 +486,19 @@ ISO 8601 形式（JST, +09:00）でタイムスタンプを記録する。
 **Context**: マルチユーザー訴求なしの判断を受けた MVP scope reduction、Application Design 全成果物 + 上流 + plan + README + park の整合的更新
 
 ---
+
+## Units Generation - U-1 確定（6 Unit + 担当割当）
+**Timestamp**: 2026-05-02T23:30:00+09:00
+**User Input**: "U-1から一緒に考えたい！僕と一緒に" → "Fは高根さんが一人で担当します！...j-ichikawaはフルスタック（生成AI混み）" → "インフラは高根、水口、苦手なので、j-ichikawaメインにした方が効率良いです" → "Eは水口さんの進捗次第。j-ichikawaがslack apiのナレッジがある" → "良さそう！"
+**AI Response**: "U-1 確定: **C 案（6 Unit 全独立構成）**。\n\n**最終担当割当**:\n- Unit-A 共通基盤・インフラ → j-ichikawa（インフラ・IaC メイン、高根・水口とも苦手のため）\n- Unit-B ダメ・ラボ Agent → j-ichikawa（AI/ML、Bedrock 統合）\n- Unit-C 傀儡度 BE → 水口（API / Lambda 集計）\n- Unit-D 音声 UI BE → 水口（Polly + WebSocket push Lambda）\n- Unit-E 外部送信 → 水口 primary / j-ichikawa fallback（Slack API ナレッジ）\n- Unit-F フロントエンド SPA → 高根（FE 専任、全画面所有 + 傀儡度ダッシュ + 音声プレイヤーの React component）\n\n**C / D 境界モデル**: BE のみ案 (i) — Lambda は Unit-C / D に閉じ、React component は Unit-F に集約\n\n**memory 更新**: `project_team_structure.md` を更新。「BE 専任」を「API / Lambda 開発専任」と再解釈、インフラ・IaC は j-ichikawa メイン、Unit-E は dynamic ownership（primary / fallback）と documenting。\n\n**drawio 更新**: `unit-of-work.drawio` の Unit-A の色を 青（水口）→ 赤（j-ichikawa）に変更、Unit-E のラベルに 'primary: 水口 / fallback: j-ichikawa' 追記、footer note 更新。\n\n**plan 更新**: `unit-of-work-plan.md` Q U-1 の [Answer] = C を記入し確定事項を documenting、Q U-4 のチーム構成記述を 4 名想定 → 3 名構成 + インフラ適性に修正。"
+**Context**: Units Generation Step 6 進行中、U-1 確定 → U-2 へ移行
+
+---
+
+## Units Generation - 完全清掃 + U-1〜U-7 確定 + Generation 3 成果物完成
+**Timestamp**: 2026-05-03T00:30:00+09:00
+**User Input**: "U-3 A / U-5 A / U-6 D / U-7 autonomousって記載が残ってる！！！！" → "書類審査は仮マッピングじゃあかんのちゃう？" → "D"
+**AI Response**: "Units Generation Step 6〜15 を一気に進行:\n\n[1] **autonomous 残骸の完全清掃** (25+ 箇所、user 指摘):\n- unit-of-work-plan.md (2)、requirements.md Appendix B (6)、stories.md Appendix B + Story X (5)、TODO_construction.md (3)、discovery-mock/agent-flow.drawio (4 + mxCell ID 3) を sed で一括置換\n- 'Autonomous モード' → 'シンギュラリティモード'、'\"autonomous\"' → '\"singularity\"'、'AutonomousScreen' → 'SingularityScreen'、mxCell id も 'autonomous-mode-frame' → 'singularity-mode-frame' に\n- audit.md は履歴のため touch せず\n- 検証: aidlc-docs / discovery-mock 配下から audit.md 以外の autonomous 残骸ゼロ\n\n[2] **U-1〜U-7 確定** (plan に [Answer] 記入):\n- U-1 = C (6 Unit 全独立)\n- U-2 = A (高根独立 Unit 一括所有)\n- U-3 = A (Mono-repo + multi-Lambda + CDK Stack 分割)\n- U-4 = A (専門領域マッピング、`memory/project_team_structure.md` 参照)\n- U-5 = A (Unit-A 完全集約)\n- U-6 = D (backend/ + frontend/ トップ分離)\n- U-7 = D (Plan §7 は議論用、Generation 成果物 unit-of-work-story-map.md を書類審査用正規版として作成、stories.md 本文は Appendix-only 戦略維持)\n\n[3] **Generation PART 2 - 3 成果物完成**:\n- `aidlc-docs/inception/application-design/unit-of-work.md`: 6 Unit 定義 + 担当 + 責務 + コード組織戦略 (backend/frontend/discovery-mock 物理分離) + 検証チェックリスト + Construction 引き継ぎ\n- `aidlc-docs/inception/application-design/unit-of-work-story-map.md` (**書類審査用正規版**): 16 実装 Story 完全リスト (Epic 別 + 改訂状態タグ そのまま/改訂/集約/削除/新規昇格) + Unit 別 Story 担当表 + デモシナリオ + AC 改訂ハイライト + PBT 適用 Story + 完全性検証 + 評価軸対応\n- `aidlc-docs/inception/application-design/unit-of-work-dependency.md`: 依存マトリクス (DAG 検証済) + 通信パターン + 3 シーケンス図 (自我/シンギュラリティ/傀儡度) + データ永続化先マッピング + 結合度評価 + 障害伝播 + PBT 境界 + デプロイ Stack 分割\n\n[4] **plan + state 更新**:\n- unit-of-work-plan.md §8 必須成果物 5 項目すべて [x]\n- aidlc-state.md: Units Generation [x] completed 2026-05-02、Current Stage を CONSTRUCTION PHASE (next) に\n\n[5] **コアタグライン継承**: 3 成果物すべて冒頭に epigraph 配置、書類審査での反復刻印を強化"
+**Context**: Units Generation ステージ完了、CONSTRUCTION フェーズへの引き継ぎ準備、approval 待ち
+
+---

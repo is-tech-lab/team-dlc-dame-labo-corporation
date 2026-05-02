@@ -78,25 +78,25 @@
           <mxGeometry height="60" width="120" x="860" y="80" as="geometry" />
         </mxCell>
 
-        <mxCell id="unit-a" parent="1" style="swimlane;startSize=40;fillColor=#dae8fc;strokeColor=#1f4ea8;fontSize=14;fontStyle=1;rounded=1;" value="Unit-A: 共通基盤 (水口)" vertex="1">
+        <mxCell id="unit-a" parent="1" style="swimlane;startSize=40;fillColor=#f8cecc;strokeColor=#c53030;fontSize=14;fontStyle=1;rounded=1;" value="Unit-A: 共通基盤・インフラ (j-ichikawa)" vertex="1">
           <mxGeometry height="120" width="1100" x="380" y="360" as="geometry" />
         </mxCell>
-        <mxCell id="unit-a-rest" parent="unit-a" style="rounded=1;fillColor=#bbd7f5;strokeColor=#1f4ea8;whiteSpace=wrap;fontSize=10;" value="API Gateway&#xa;REST" vertex="1">
+        <mxCell id="unit-a-rest" parent="unit-a" style="rounded=1;fillColor=#fde0d0;strokeColor=#c53030;whiteSpace=wrap;fontSize=10;" value="API Gateway&#xa;REST" vertex="1">
           <mxGeometry height="60" width="140" x="20" y="50" as="geometry" />
         </mxCell>
-        <mxCell id="unit-a-ws" parent="unit-a" style="rounded=1;fillColor=#bbd7f5;strokeColor=#1f4ea8;whiteSpace=wrap;fontSize=10;" value="API Gateway&#xa;WebSocket" vertex="1">
+        <mxCell id="unit-a-ws" parent="unit-a" style="rounded=1;fillColor=#fde0d0;strokeColor=#c53030;whiteSpace=wrap;fontSize=10;" value="API Gateway&#xa;WebSocket" vertex="1">
           <mxGeometry height="60" width="140" x="180" y="50" as="geometry" />
         </mxCell>
-        <mxCell id="unit-a-layer" parent="unit-a" style="rounded=1;fillColor=#bbd7f5;strokeColor=#1f4ea8;whiteSpace=wrap;fontSize=10;" value="Lambda&#xa;Common Layer" vertex="1">
+        <mxCell id="unit-a-layer" parent="unit-a" style="rounded=1;fillColor=#fde0d0;strokeColor=#c53030;whiteSpace=wrap;fontSize=10;" value="Lambda&#xa;Common Layer" vertex="1">
           <mxGeometry height="60" width="140" x="340" y="50" as="geometry" />
         </mxCell>
-        <mxCell id="unit-a-ddb" parent="unit-a" style="rounded=1;fillColor=#bbd7f5;strokeColor=#1f4ea8;whiteSpace=wrap;fontSize=9;" value="DynamoDB&#xa;CategoryStates / ChoiceLogs / SingularityReports / WebSocketConnections" vertex="1">
+        <mxCell id="unit-a-ddb" parent="unit-a" style="rounded=1;fillColor=#fde0d0;strokeColor=#c53030;whiteSpace=wrap;fontSize=9;" value="DynamoDB&#xa;CategoryStates / ChoiceLogs / SingularityReports / WebSocketConnections" vertex="1">
           <mxGeometry height="60" width="280" x="500" y="50" as="geometry" />
         </mxCell>
-        <mxCell id="unit-a-eb" parent="unit-a" style="rounded=1;fillColor=#bbd7f5;strokeColor=#1f4ea8;whiteSpace=wrap;fontSize=10;" value="EventBridge&#xa;cron + デモ即時" vertex="1">
+        <mxCell id="unit-a-eb" parent="unit-a" style="rounded=1;fillColor=#fde0d0;strokeColor=#c53030;whiteSpace=wrap;fontSize=10;" value="EventBridge&#xa;cron + デモ即時" vertex="1">
           <mxGeometry height="60" width="140" x="800" y="50" as="geometry" />
         </mxCell>
-        <mxCell id="unit-a-iam" parent="unit-a" style="rounded=1;fillColor=#bbd7f5;strokeColor=#1f4ea8;whiteSpace=wrap;fontSize=10;" value="IAM Roles&#xa;CDK Stack" vertex="1">
+        <mxCell id="unit-a-iam" parent="unit-a" style="rounded=1;fillColor=#fde0d0;strokeColor=#c53030;whiteSpace=wrap;fontSize=10;" value="IAM Roles&#xa;CDK Stack" vertex="1">
           <mxGeometry height="60" width="140" x="950" y="50" as="geometry" />
         </mxCell>
 
@@ -139,17 +139,17 @@
           <mxGeometry height="20" width="180" x="20" y="148" as="geometry" />
         </mxCell>
 
-        <mxCell id="unit-e" parent="1" style="swimlane;startSize=40;fillColor=#dae8fc;strokeColor=#1f4ea8;fontSize=13;fontStyle=1;rounded=1;" value="Unit-E: 外部送信 (水口)&#xa;★ 最重要安全境界" vertex="1">
-          <mxGeometry height="180" width="240" x="1140" y="520" as="geometry" />
+        <mxCell id="unit-e" parent="1" style="swimlane;startSize=50;fillColor=#dae8fc;strokeColor=#1f4ea8;fontSize=13;fontStyle=1;rounded=1;" value="Unit-E: 外部送信&#xa;primary: 水口 / fallback: j-ichikawa&#xa;★ 最重要安全境界" vertex="1">
+          <mxGeometry height="190" width="240" x="1140" y="520" as="geometry" />
         </mxCell>
         <mxCell id="unit-e-slack" parent="unit-e" style="rounded=1;fillColor=#bbd7f5;strokeColor=#1f4ea8;whiteSpace=wrap;fontSize=10;" value="sendSlackMessage&#xa;(Slack Web API)" vertex="1">
-          <mxGeometry height="40" width="200" x="20" y="55" as="geometry" />
+          <mxGeometry height="40" width="200" x="20" y="65" as="geometry" />
         </mxCell>
         <mxCell id="unit-e-whitelist" parent="unit-e" style="rounded=1;fillColor=#bbd7f5;strokeColor=#1f4ea8;whiteSpace=wrap;fontSize=10;" value="const ホワイトリスト&#xa;ALLOWED_SLACK_*" vertex="1">
-          <mxGeometry height="40" width="200" x="20" y="100" as="geometry" />
+          <mxGeometry height="40" width="200" x="20" y="110" as="geometry" />
         </mxCell>
         <mxCell id="unit-e-dryrun" parent="unit-e" style="rounded=1;fillColor=#bbd7f5;strokeColor=#1f4ea8;whiteSpace=wrap;fontSize=10;" value="DRY_RUN モード&#xa;誤送信防止" vertex="1">
-          <mxGeometry height="30" width="200" x="20" y="145" as="geometry" />
+          <mxGeometry height="30" width="200" x="20" y="155" as="geometry" />
         </mxCell>
 
         <mxCell id="edge-f-a" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#666;strokeWidth=2;endArrow=classic;startArrow=classic;" edge="1" source="unit-f" target="unit-a">
@@ -196,8 +196,8 @@
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
 
-        <mxCell id="footer-note" parent="1" style="text;html=1;align=center;fontSize=11;fontStyle=2;fontColor=#666;whiteSpace=wrap;" value="U-1 候補 C 案 = 6 Unit 全独立構成。F は高根さん 1 人で全画面所有 (FE 専任)、A/C/D/E は水口さん (BE 専任)、B は j-ichikawa (AI/ML)。&#xa;Unit-C/D の React component は Unit-F 内 (高根) に配置、BE Lambda は Unit-C/D に閉じる。安全境界 (Unit-E) は物理的に独立し PR レビューで監視可能。" vertex="1">
-          <mxGeometry height="50" width="1400" x="40" y="760" as="geometry" />
+        <mxCell id="footer-note" parent="1" style="text;html=1;align=center;fontSize=11;fontStyle=2;fontColor=#666;whiteSpace=wrap;" value="U-1 候補 C 案 = 6 Unit 全独立構成。F は高根さん 1 人で全画面所有 (FE 専任)、C/D/E は水口さん (BE 専任、API / Lambda 開発)、A + B は j-ichikawa (Fullstack + AI/ML + インフラ)。&#xa;インフラ・IaC (CDK / IAM / API GW / DDB / EventBridge) は高根・水口とも苦手のため j-ichikawa メイン。Unit-C/D の React component は Unit-F 内 (高根) に配置、BE Lambda は Unit-C/D に閉じる。安全境界 (Unit-E) は物理的に独立し PR レビューで監視可能。" vertex="1">
+          <mxGeometry height="60" width="1400" x="40" y="760" as="geometry" />
         </mxCell>
 
       </root>

@@ -19,13 +19,13 @@
         <mxCell id="legend-l2" parent="1" style="text;html=1;align=left;fontSize=12;fontColor=#7a3aa8;" value="② 委譲アクション (紫)" vertex="1">
           <mxGeometry height="20" width="310" x="56" y="172" as="geometry" />
         </mxCell>
-        <mxCell id="legend-l3" parent="1" style="text;html=1;align=left;fontSize=12;fontColor=#c53030;" value="③ Autonomous モード — 自律実行 (赤)" vertex="1">
+        <mxCell id="legend-l3" parent="1" style="text;html=1;align=left;fontSize=12;fontColor=#c53030;" value="③ シンギュラリティモード — 自律実行 (赤)" vertex="1">
           <mxGeometry height="20" width="310" x="56" y="194" as="geometry" />
         </mxCell>
         <mxCell id="legend-l4" parent="1" style="text;html=1;align=left;fontSize=12;fontColor=#2e7d4f;" value="④ ミラー集計 (緑)" vertex="1">
           <mxGeometry height="20" width="310" x="56" y="216" as="geometry" />
         </mxCell>
-        <mxCell id="legend-mvp-note" parent="1" style="text;html=1;align=left;fontSize=11;fontStyle=2;fontColor=#888;" value="MVP 設計:&#xa;・Profile Agent 除外 (TODO_construction.md)&#xa;・Suggestion + Delegation&amp;Execution を 1 Agent に統合&#xa;・Phase 概念を user 面から撤廃&#xa;・Active モードは常に「4 提案 + 自由記載」&#xa;・Autonomous モードは完全委譲 or 3 回トレーニングで遷移&#xa;・SELF_DECISION_LIMIT = 3 (auto-graduate)&#xa;・HIL: AI 提案 → user 選択、 wizard 入力なし" vertex="1">
+        <mxCell id="legend-mvp-note" parent="1" style="text;html=1;align=left;fontSize=11;fontStyle=2;fontColor=#888;" value="MVP 設計:&#xa;・Profile Agent 除外 (TODO_construction.md)&#xa;・Suggestion + Delegation&amp;Execution を 1 Agent に統合&#xa;・Phase 概念を user 面から撤廃&#xa;・Active モードは常に「4 提案 + 自由記載」&#xa;・シンギュラリティモードは完全委譲 or 3 回トレーニングで遷移&#xa;・SELF_DECISION_LIMIT = 3 (auto-graduate)&#xa;・HIL: AI 提案 → user 選択、 wizard 入力なし" vertex="1">
           <mxGeometry height="128" width="310" x="56" y="240" as="geometry" />
         </mxCell>
         <mxCell id="active-mode-label" parent="1" style="text;html=1;align=left;verticalAlign=middle;fontSize=14;fontStyle=1;fontColor=#1f4ea8;" value="Active モード (user が AI と対話)" vertex="1">
@@ -43,10 +43,10 @@
         <mxCell id="output-suggestion" parent="1" style="rounded=1;whiteSpace=wrap;fillColor=#cce5ff;strokeColor=#1f4ea8;fontSize=11;fontStyle=1;align=center;" value="AI 提案 (常に 4 つ + 自由記載欄)&#xa;単発委譲時は AI が 4 つから 1 つ選択 → 同画面に表示" vertex="1">
           <mxGeometry height="60" width="600" x="440" y="280" as="geometry" />
         </mxCell>
-        <mxCell id="autonomous-mode-label" parent="1" style="text;html=1;align=left;verticalAlign=middle;fontSize=14;fontStyle=1;fontColor=#c53030;" value="Autonomous モード (完全委譲後、AI 自律実行)" vertex="1">
+        <mxCell id="singularity-mode-label" parent="1" style="text;html=1;align=left;verticalAlign=middle;fontSize=14;fontStyle=1;fontColor=#c53030;" value="シンギュラリティモード (完全委譲後、AI 自律実行)" vertex="1">
           <mxGeometry height="30" width="450" x="1100" y="120" as="geometry" />
         </mxCell>
-        <mxCell id="autonomous-mode-frame" parent="1" style="rounded=1;fillColor=#fdf5f6;strokeColor=#e0a8b0;dashed=0;fontSize=10;" value="" vertex="1">
+        <mxCell id="singularity-mode-frame" parent="1" style="rounded=1;fillColor=#fdf5f6;strokeColor=#e0a8b0;dashed=0;fontSize=10;" value="" vertex="1">
           <mxGeometry height="220" width="500" x="1100" y="150" as="geometry" />
         </mxCell>
         <mxCell id="trigger-sched" parent="1" style="rounded=1;whiteSpace=wrap;fillColor=#f2d8de;strokeColor=#c53030;fontSize=11;fontStyle=1;" value="③ EventBridge スケジュール&#xa;(自発代行: 誕生日リマインド / サブスク見直し /&#xa;日用品補充 等)" vertex="1">
@@ -61,7 +61,7 @@
         <mxCell id="agent-row-label" parent="1" style="text;html=1;align=left;verticalAlign=middle;fontSize=14;fontStyle=1;fontColor=#666;" value="Agent (MVP: 1 つに統合)" vertex="1">
           <mxGeometry height="30" width="200" x="40" y="420" as="geometry" />
         </mxCell>
-        <mxCell id="agent-suggest" parent="1" style="rounded=1;whiteSpace=wrap;fillColor=#e3d5f0;strokeColor=#5a3a8a;fontSize=11;fontStyle=1;align=left;verticalAlign=top;spacingLeft=10;spacingTop=10;" value="ダメ・ラボ Agent (単一)&#xa;&#xa;責務 (mode に応じて切替):&#xa;&#xa;【Active モード】&#xa;• 観察データから context 推論 (内部処理)&#xa;• 常に 4 提案 + 自由記載欄 を返す (Bedrock 呼出)&#xa;• 単発委譲時は 4 つから 1 つ選んで返す&#xa;• 選択ログ作成 (DynamoDB 書込)&#xa;&#xa;【Autonomous モード】&#xa;• 委譲アクション処理 (DynamoDB 書込)&#xa;• 受信代行 (来た連絡 / カート / 通知への応答)&#xa;• 自発代行 (誕生日リマインド / サブスク見直し / 日用品補充 等の AI 発)&#xa;• Bedrock 自律判断 + Polly 音声報告生成&#xa;&#xa;MVP: context 推論は hardcoded、本番: 実 LINE/Slack/EC 連携" vertex="1">
+        <mxCell id="agent-suggest" parent="1" style="rounded=1;whiteSpace=wrap;fillColor=#e3d5f0;strokeColor=#5a3a8a;fontSize=11;fontStyle=1;align=left;verticalAlign=top;spacingLeft=10;spacingTop=10;" value="ダメ・ラボ Agent (単一)&#xa;&#xa;責務 (mode に応じて切替):&#xa;&#xa;【Active モード】&#xa;• 観察データから context 推論 (内部処理)&#xa;• 常に 4 提案 + 自由記載欄 を返す (Bedrock 呼出)&#xa;• 単発委譲時は 4 つから 1 つ選んで返す&#xa;• 選択ログ作成 (DynamoDB 書込)&#xa;&#xa;【シンギュラリティモード】&#xa;• 委譲アクション処理 (DynamoDB 書込)&#xa;• 受信代行 (来た連絡 / カート / 通知への応答)&#xa;• 自発代行 (誕生日リマインド / サブスク見直し / 日用品補充 等の AI 発)&#xa;• Bedrock 自律判断 + Polly 音声報告生成&#xa;&#xa;MVP: context 推論は hardcoded、本番: 実 LINE/Slack/EC 連携" vertex="1">
           <mxGeometry height="320" width="540" x="600" y="450" as="geometry" />
         </mxCell>
         <mxCell id="agent-merged-note" parent="1" style="text;html=1;align=center;fontSize=10;fontStyle=2;fontColor=#888;" value="⚠ 当初は 2 Agent 構成 (サジェスチョン + 委譲＆実行) だったが&#xa;Discovery Mock のチームレビュー後 (2026-05-02) に MVP として 1 つに統合。&#xa;将来 (Construction 以降) で再分離する余地あり (TODO_construction.md 参照)" vertex="1">
@@ -73,7 +73,7 @@
         <mxCell id="ext-bedrock-1" parent="1" style="rounded=1;whiteSpace=wrap;fillColor=#fde6c4;strokeColor=#d68a3a;fontSize=11;fontStyle=1;" value="Bedrock&#xa;(LLM / Agent Core)&#xa;選択肢生成" vertex="1">
           <mxGeometry height="60" width="200" x="440" y="730" as="geometry" />
         </mxCell>
-        <mxCell id="data-dynamo" parent="1" style="shape=cylinder3;whiteSpace=wrap;fillColor=#e0e0e0;strokeColor=#666;fontSize=11;fontStyle=1;align=center;verticalAlign=middle;" value="DynamoDB&#xa;&#xa;• 選択ログ&#xa;• 委譲履歴&#xa;• Mode 状態 (active / autonomous)&#xa;• (将来) Profile" vertex="1">
+        <mxCell id="data-dynamo" parent="1" style="shape=cylinder3;whiteSpace=wrap;fillColor=#e0e0e0;strokeColor=#666;fontSize=11;fontStyle=1;align=center;verticalAlign=middle;" value="DynamoDB&#xa;&#xa;• 選択ログ&#xa;• 委譲履歴&#xa;• Mode 状態 (ego / singularity)&#xa;• (将来) Profile" vertex="1">
           <mxGeometry height="120" width="240" x="800" y="710" as="geometry" />
         </mxCell>
         <mxCell id="ext-bedrock-2" parent="1" style="rounded=1;whiteSpace=wrap;fillColor=#fde6c4;strokeColor=#d68a3a;fontSize=11;fontStyle=1;" value="Bedrock&#xa;(自律判断)" vertex="1">
@@ -82,7 +82,7 @@
         <mxCell id="ext-polly" parent="1" style="rounded=1;whiteSpace=wrap;fillColor=#fde6c4;strokeColor=#d68a3a;fontSize=11;fontStyle=1;" value="Amazon Polly&#xa;(TTS)" vertex="1">
           <mxGeometry height="60" width="180" x="1340" y="730" as="geometry" />
         </mxCell>
-        <mxCell id="output-earphone" parent="1" style="rounded=1;whiteSpace=wrap;fillColor=#f5f5f5;strokeColor=#888;fontSize=12;" value="ユーザーのイヤホン&#xa;(Autonomous モードの一方向通知)" vertex="1">
+        <mxCell id="output-earphone" parent="1" style="rounded=1;whiteSpace=wrap;fillColor=#f5f5f5;strokeColor=#888;fontSize=12;" value="ユーザーのイヤホン&#xa;(シンギュラリティモードの一方向通知)" vertex="1">
           <mxGeometry height="60" width="380" x="1140" y="860" as="geometry" />
         </mxCell>
         <mxCell id="mirror-label" parent="1" style="text;html=1;align=left;verticalAlign=middle;fontSize=14;fontStyle=1;fontColor=#666;" value="Mirror View (非 AI、集計のみ)" vertex="1">
@@ -153,7 +153,7 @@
         <mxCell id="e4-2" edge="1" parent="1" source="mirror-view" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#2e7d4f;strokeWidth=2;fontSize=11;fontColor=#2e7d4f;" target="mirror-browser" value="ダッシュボード描画">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="e-mode-transition" edge="1" parent="1" source="active-mode-frame" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#7a3aa8;strokeWidth=2;dashed=1;fontSize=10;fontStyle=2;fontColor=#7a3aa8;" target="autonomous-mode-frame" value="完全委譲 or 3 回トレーニング達成で Mode 遷移&#xa;(SELF_DECISION_LIMIT = 3)">
+        <mxCell id="e-mode-transition" edge="1" parent="1" source="active-mode-frame" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#7a3aa8;strokeWidth=2;dashed=1;fontSize=10;fontStyle=2;fontColor=#7a3aa8;" target="singularity-mode-frame" value="完全委譲 or 3 回トレーニング達成で Mode 遷移&#xa;(SELF_DECISION_LIMIT = 3)">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
       </root>

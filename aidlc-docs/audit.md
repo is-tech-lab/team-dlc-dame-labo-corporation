@@ -358,3 +358,99 @@ ISO 8601 形式（JST, +09:00）でタイムスタンプを記録する。
 **Context**: Discovery Mock 実装、ローカル動作確認まで完了
 
 ---
+
+## Application Design - チーム回答完了通知
+**Timestamp**: 2026-05-02T19:00:00+09:00
+**User Input**: "アプリ設計プラン回答完了"
+**AI Response**: "application-design-plan.md を再読込し、C-3〜C-8 の回答を確認。Step 8 (MANDATORY ANALYSIS) を実施し、2 点の整合性懸念を検出: (1) C-3 = A (REST のみ) と C-5 = A (WebSocket push) の論理矛盾、(2) C-8 = B (限定実送信) のコードレベル境界管理が未定。Follow-up 質問 C-3a / C-8a を user に提示し、approval を保留。"
+**Context**: Application Design Step 7（回答収集）完了 → Step 8（曖昧性チェック）で矛盾 2 件検出
+
+---
+
+## Application Design - Follow-up C-3a 回答（API レイヤー矛盾解消）
+**Timestamp**: 2026-05-02T19:05:00+09:00
+**User Input**: "1: A) C-3 を C（REST + WebSocket） に訂正（C-5 = A WebSocket push を維持）"
+**AI Response**: "C-3 = A → **C（REST + WebSocket）** に訂正で確定。同期 API 系は REST、音声通知 push は WebSocket の 2 チャネル構成。これにより共通基盤 Unit に WebSocket レイヤーが必要となり、Units Generation 時の Unit 境界に影響することを留意。"
+**Context**: Step 9 Follow-up Q&A で API スタイル矛盾を解消
+
+---
+
+## Application Design - Follow-up C-8a 説明要求と回答
+**Timestamp**: 2026-05-02T19:10:00+09:00
+**User Input**: "2 これどういうこと？このデモのためのslack worskapcesを想定しておりました" → "C"
+**AI Response**: "C-8a の趣旨を再説明: 送信先 (専用 Slack workspace) は決まっていても、Lambda コード自体は『Slack API を叩く』関数なので設定ミスで本番事故のリスクが残る。コードレイヤーで誤送信を物理的に止める仕組みとして 3 案提示 (A: 環境変数ホワイトリスト、B: コード内 const ホワイトリスト、C: B+DRY_RUN モード)。\n\n→ user 回答 **C**: コード内 const ホワイトリスト + DRY_RUN モード採用で確定。送信先 workspace ID / channel ID 列を application code に hardcode し PR レビューで誤設定検出、`DRY_RUN=true` でローカル開発中は送信完全スキップ、デモ当日のみ `DRY_RUN=false` で実送信。専用 Slack workspace 用意は user 確認済みの前提。"
+**Context**: Step 9 Follow-up Q&A で外部送信境界管理を確定
+
+---
+
+## Application Design - 成果物 5 ファイル生成
+**Timestamp**: 2026-05-02T19:30:00+09:00
+**User Input**: "C" (C-8a 確定)
+**AI Response**: "Application Design Step 10 を実行し、以下 5 ファイルを `aidlc-docs/inception/application-design/` に生成:\n\n1. `components.md` — 7 コンポーネント定義（ダメ・ラボ Agent / ミラー・ビュー / 認証 / 共通基盤 / 音声 UI / フロント SPA / 外部送信）+ PBT-01 forward flag\n2. `component-methods.md` — 各コンポーネントの主要メソッドシグネチャ（TypeScript ライク擬似コード）。詳細ビジネスルールは Functional Design で扱う旨明記\n3. `services.md` — S1〜S8 のユースケース別オーケストレーション + Mermaid シーケンス図 + Mermaid フローチャート\n4. `component-dependency.md` — 依存関係マトリクス + 通信パターン早見表 + 3 シーケンス図 (Active / Autonomous / Mirror) + 結合度評価 + 障害伝播\n5. `application-design.md` — 統合俯瞰: 設計入力サマリ / アーキテクチャ俯瞰図 / 整合性チェック / Extensions コンプライアンス (security-baseline disabled, PBT enabled with Functional Design forward flag) / Construction 引き継ぎ事項 / リスク認識\n\n**設計の核**:\n- 単一 Agent (mode-aware) を中心に据えた MVP 設計、C-1/C-2 = Z で multi-agent orchestration を排除\n- C-3a 訂正により API Gateway を REST + WebSocket の 2 種類に確定\n- C-4 で本番 cron + デモボタンを EventBridge ハンドラで一元化\n- C-8 + C-8a = C により 外部メッセージング送信は const ホワイトリスト + DRY_RUN の多層防御を最重要安全境界として明文化\n- Story X.1 (3 回 graduate) と X.3 (自動初回発火) を S3, S4, S5/S6 のフローでカバー\n\nplan ファイル `application-design-plan.md` には Follow-up Resolution セクション (§8.5) を append-only で追加し、確定設計入力サマリを含めた。本文の元 [Answer]: タグは温存。"
+**Context**: Application Design 全成果物の生成、Step 12 (完了メッセージ提示) を user に提示する直前
+
+---
+
+## Application Design - 外部チャネル MVP スコープ縮減（Slack only）
+**Timestamp**: 2026-05-02T19:50:00+09:00
+**User Input**: "外部は一旦、slackだけでいいよ。sesってなんで？？？"
+**AI Response**: "SES (AWS Simple Email Service) を user に説明: AWS マネージドメール送信サービス、当初 requirements.md で『連絡』カテゴリの返信代行先として LINE / メール / Slack の 3 チャネルを想定したため機械的に含めたが、MVP では over-engineering と判断。\n\nSlack 1 チャネルに絞り込む scope 縮減を実施し、以下を更新:\n- `aidlc-docs/inception/application-design/components.md` §1 表 + §2.7 + §3 ASCII art: Slack only に修正、LINE / SES は park 注記\n- `aidlc-docs/inception/application-design/component-methods.md` §7: sendExternalMessage → sendSlackMessage に rename、シグネチャ簡素化、ALLOWED_LINE_USER_IDS / ALLOWED_EMAIL_RECIPIENTS 削除\n- `aidlc-docs/inception/application-design/services.md` §S5 シーケンス図: Slack/LINE/SES → Slack Web API\n- `aidlc-docs/inception/application-design/component-dependency.md` §2 表 + §3.2 シーケンス図 + §6 障害伝播: 全て Slack 単一に修正\n- `aidlc-docs/inception/application-design/application-design.md` §2 アーキテクチャ俯瞰図: External Channels に Slack のみ残し LINE/SES ノード削除\n- `aidlc-docs/inception/plans/application-design-plan.md` Follow-up C-8b 追記\n- `aidlc-docs/construction/TODO_construction.md` に「外部メッセージング送信チャネルの拡張（LINE/メール）」を park 項目として追加"
+**Context**: MVP scope reduction, LINE/SES を park、Slack only に絞り込み
+
+---
+
+## Application Design - 音声出力スコープ確認（α 維持）+ Speech-to-Speech 検討
+**Timestamp**: 2026-05-02T20:00:00+09:00
+**User Input**: "s3 audio reportsとは？？？" → "音声ファイルは必要？MVPでも / ユーザーが声で操作する場合はspeech to speechになる？？？" → "a維持で！書類審査は設計までなので"
+**AI Response**: "S3 audio-reports を user に説明: Polly が生成した音声ファイル (MP3) を保存する S3 バケット、フロントから presigned URL 経由で <audio> タグ再生する標準パターン。\n\n音声出力の必要性について 3 案提示 (α: Polly+S3 維持 / β: Web Speech API でフロント完結 / γ: 完全撤去)、Speech-to-Speech 化について世界観整合性 (Phase 4 で『何もしない』のが本質、能動的応答は傀儡化テーマと矛盾) と技術スコープ (Transcribe/Lex/Nova Sonic 追加) の両面から MVP 対象外を推奨。\n\n→ user 判断 **α 維持**（書類審査は設計までなので、設計は本番品質を目指す）。Speech-to-Speech は park。\n\n以下を更新:\n- `aidlc-docs/inception/plans/application-design-plan.md` Follow-up C-5a 追記（α 維持 + Speech-to-Speech park）\n- `aidlc-docs/construction/TODO_construction.md` に「Speech-to-Speech（音声入力 → 音声出力の双方向）」を park 項目として追加\n\n音声 UI コンポーネントは現設計（components.md §2.5、Polly + WebSocket push）のまま維持、修正不要。"
+**Context**: 書類審査は設計までという制約理解の上で α 維持を確認、Speech-to-Speech は将来検討に park
+
+---
+
+## Application Design - Phase 表現削除と傀儡化方針の明文化
+**Timestamp**: 2026-05-02T20:15:00+09:00
+**User Input**: "phaseって表現やめてほしい！mockの時にphaseはとっぱらったはず。HILが多くてしんどい。傀儡感を増すために"
+**AI Response**: "Discovery Mock リファクタで Phase 概念を撤廃済（requirements.md Appendix B.2）にもかかわらず、application-design 新規ドキュメント生成時に上流の Phase 1-4 表現を無意識に引っ張ってきていた違反を user が指摘。\n\n以下を修正:\n- `components.md`: 'Phase 4 到達カテゴリ数' → 'Autonomous モード到達カテゴリ数（傀儡化が完了したカテゴリ）'、'Phase 4 自律実行 cron' → 'Autonomous モード自律実行 cron'、ASCII art の '(Phase 4 トリガ)' → '(Autonomous トリガ)'、'Phase 1〜3 の段階的 UX' は文脈が「撤廃済の歴史的記述」なので残しつつ '撤廃済、Active / Autonomous の 2 モード + 3 回 auto-graduate に統一' と明確化\n- `component-methods.md`: schedulePhase4Sweep → scheduleAutonomousSweep（メソッド名 rename）、サマリ表も更新\n- `services.md`: S5 / S6 のサービス名から 'Phase 4' → 'Autonomous モード'\n- `application-design.md`: §4 サービス一覧の S5 / S6 を同様に rename\n- `application-design-plan.md` Follow-up C-5a: 'ユーザーは Phase 4 で何もしない' → 'ユーザーは Autonomous モードで何もしない'\n\nさらに **傀儡化方針** を明文化:\n- `components.md` §2.1 ダメ・ラボ Agent に「Active モードは通過点、Autonomous モードが到達点。能動介入を最小限に留め速やかに遷移、『決めない快楽』を最短距離で体験させる」設計意図を追記\n\n注: `application-design-plan.md` §4 / §5 の本文（Question C-4 / C-5 の問題文）の Phase 4 表現はオリジナルのチーム合作内容のため温存（.md 保護ルール、Appendix-only 戦略）。`requirements.md` 等の本文も同様に不変扱い、Appendix B.2 で Phase → 2 モード化を明記済。"
+**Context**: 用語整合性とテーマ整合性の修正（Phase → Active/Autonomous モード、傀儡化を強化）
+
+---
+
+## Application Design - モード名称改名（Autonomous/Active → シンギュラリティ/自我）
+**Timestamp**: 2026-05-02T20:30:00+09:00
+**User Input**: "Autonomousってわかりにく。いくつか名前を候補出して! シンギュラリティってのがこちらでいいなと思ってる" → "シンギュラリティモードで！！！" → "覚醒モード　も名前考えたい" → "egoモードで！"
+**AI Response**: "技術用語『Autonomous モード』『Active モード』を世界観整合の名称に改名。\n\n**Autonomous → シンギュラリティ (singularity)**: SF/AI 哲学的、書類審査映え、『AI が人間を超越』感がチーム名『ダメ・ラボ』のテーマと直結。\n\n**Active → 自我 (ego)**: 仏教/哲学的、『自我のあるうちは決めねばならぬ。3 回で自我は溶け、シンギュラリティに至る』というナラティブ。傀儡化テーマと完璧に整合（自我消滅 = 傀儡化完了）。\n\n以下のファイルで一括 rename を実施:\n- `components.md` / `component-methods.md` / `services.md` / `component-dependency.md` / `application-design.md`\n- `application-design-plan.md` の §0 + Follow-up Resolution セクション（§4 / §5 のオリジナル質問文中の Phase 4 表現は audit trail 整合性のため温存）\n\nコード識別子の対応関係:\n- `\"autonomous\"` → `\"singularity\"`（DynamoDB modeState 列等）\n- `\"active\"` → `\"ego\"`（同上）\n- `runAutonomousAction` → `runSingularityAction`\n- `scheduleAutonomousSweep` → `scheduleSingularitySweep`\n- `AutonomousReports` テーブル → `SingularityReports` テーブル\n- `AutonomousScreen` (フロント) → `SingularityScreen`\n- WebSocket message type `\"autonomous_report\"` → `\"singularity_report\"`\n- API endpoint `/demo/trigger-autonomous` → `/demo/trigger-singularity`\n\n**世界観強化**:\n- components.md §2.1 ダメ・ラボ Agent に『自我モードは通過点、シンギュラリティモードが到達点』設計意図注記済\n- 『3 回の自己決定 (= 自我の抵抗) を経て自我が溶け、シンギュラリティに到達する』ナラティブが Functional Design / Code Generation で継承される基盤を構築\n\n**温存された箇所**:\n- `application-design-plan.md` §4 / §5 の Question C-4 / C-5 の問題文（Phase 4 表現）— オリジナル質問の audit trail として温存\n- `requirements.md` / `stories.md` / `personas.md` 本文 — Appendix B で MVP override 済の不変扱いを継続\n- `team-pre-discussion.md` — 完全不変"
+**Context**: 技術用語から世界観整合の命名へ移行、書類審査の物語性強化
+
+---
+
+## Application Design - 設計コアタグライン誕生・刻印
+**Timestamp**: 2026-05-02T20:40:00+09:00
+**User Input**: "「自我のあるうちは決めねばならぬ。3 回で自我は溶け、シンギュラリティに至る」　これ素晴らしすぎる例だ"
+**AI Response**: "モード命名議論で偶発的に生成されたフレーズに対する user の強い confirm。技術設計（SELF_DECISION_LIMIT = 3）を物語ナラティブに翻訳した瞬間として認識し、以下に永続化:\n\n1. `aidlc-docs/inception/application-design/application-design.md` 冒頭に `🜂 設計コアタグライン` ブロックを epigraph として追記。書類審査・予選・決勝の各場面で横断引用する旨明記\n2. `aidlc-docs/inception/application-design/components.md` §2.1 ダメ・ラボ Agent の『設計上の意図（傀儡化方針）』ブロックを更新し、タグラインを冒頭引用句として埋め込み + Bedrock Agent システムプロンプト引用候補と明記\n3. プロジェクトメモリに `project_core_tagline.md` を新規作成、MEMORY.md にインデックス追加。後続セッションで世界観議論時に常時参照可能化、文言を勝手に改良しないよう注意書き付き\n\n世界観 3 要素（3 回トレーニング閾値 / 自我消滅 / シンギュラリティ到達）が時間軸の物語として 1 文に圧縮されており、書類審査の hero copy / 決勝プレゼン冒頭 / フロント LP / Bedrock システムプロンプトに直接転用可能な戦略資産として位置付け。"
+**Context**: 偶発的に生成された世界観タグラインの確定・永続化、設計が物語に変換された瞬間の刻印
+
+---
+
+## TODO.md 新設 — 書類審査前タスク + 大会ロードマップ集約
+**Timestamp**: 2026-05-02T20:50:00+09:00
+**User Input**: "TODO に追加！提出前。READMEが大会概要になっているので、審査員はハテナとなるため、アプリケーションのREADMEにする" → "ごめん止めちゃった。rootにTODO.md作ってそこにREADMEの修正を書類提出前にして。あと、大会のTODOもここに記載しておいて"
+**AI Response**: "プロジェクトルートに `TODO.md` を新規作成（global CLAUDE.md の TODO.md 管理ルール対象に）。`TODO_construction.md` は Construction フェーズの技術検討事項管理に責務限定し、本ファイルはハッカソン進行のタスクを集約する。\n\n**収録内容**:\n- 🔥 書類審査（5/10 締切）: README をアプリケーション README に書き直す（最優先）、大会概要を HACKATHON.md に退避、タグライン Tier 1〜3 刻印タスク、提出書類本体作成、Inception 成果物最終レビュー\n- 🟡 予選（5/30）: 通過確認、MVP 実装、デモシナリオ、プレゼン準備\n- 🟢 決勝（6/26）: 本番品質引き上げ、Polly 移行、外部チャネル拡張検討、決勝プレゼン演出\n- 🔵 進行中: INCEPTION フェーズ進捗（Application Design 承認待ち）\n- 📦 park 中: TODO_construction.md への参照 + ストーリー候補 X.1〜X.4\n\nファイル冒頭にタグラインを epigraph として配置（4 つ目の刻印場所）。完了済みタスクは [x] で記録、global CLAUDE.md ルールに従い改変禁止運用。"
+**Context**: ハッカソン進行管理のための TODO 集約、README リファクタを提出前最優先タスクとして明文化
+
+---
+
+## Application Design - 傀儡度 改名（ミラー・ビュー → 傀儡度 / PuppetLevel）
+**Timestamp**: 2026-05-02T21:00:00+09:00
+**User Input**: "ごめん、TODO.mdをこっちで書い直しちゃった！\n\nあと、ミラー・ビューって名前がしっくりこない" → "傀儡度で！"
+**AI Response**: "TODO.md は user の書き直し（README リファクタの 1 行に集約）を尊重、こちらからの再追加はしない。\n\nミラー・ビューの改名候補を 4 系統 11 案で提示（鏡系 / 自我溶解記録系 / 堕落カルテ系 / 直球テーマ系）。user 選択 = **傀儡度（kairaido / PuppetLevel）**、直球テーマ系 D1 案。\n\n**改名の意義**:\n- チーム名「ダメ・ラボ・コーポレーション」+ ハッカソンテーマ「人をダメにする」と最も直接的に直結\n- 自我モード → シンギュラリティモード という命名階層に対し、傀儡度は「シンギュラリティへの到達進捗を測るメーター」として位置付けが明快\n- 「ダメになっていく」ナラティブと完全整合\n\n以下のファイルで `ミラー・ビュー` → `傀儡度`、English 識別子 `Mirror` → `PuppetLevel` を一括 rename:\n- `components.md` / `component-methods.md` / `services.md` / `component-dependency.md` / `application-design.md`\n- `application-design-plan.md` の §0 ミラー・ビュー言及を更新（§6 / §8 のオリジナル Question 内『ミラー』表現は audit trail 整合性のため温存）\n\nコード識別子の対応:\n- コンポーネント: ミラー・ビュー → 傀儡度\n- Lambda: `MirrorLambda` / `MirrorL` → `PuppetLevelLambda` / `PuppetLevelL`\n- メソッド: `getMirrorSummary` → `getPuppetLevelSummary`（getCategoryDetail はそのまま）\n- フロント画面: `MirrorScreen` → `PuppetLevelScreen`\n- API endpoint: `/mirror` → `/puppet-level`\n- Mermaid diagram の participant `Mirror` → `PuppetLevel`\n\nコンポーネント命名 3 単語セット完成: **自我（ego）→ 傀儡度（PuppetLevel）→ シンギュラリティ（singularity）**。書類審査で『自我モードでの選択 → 傀儡度に蓄積 → シンギュラリティへ到達』の 3 段ナラティブが読み手に伝わる構造が確立。"
+**Context**: コンポーネント命名のテーマ整合性向上、3 単語セット（自我・傀儡度・シンギュラリティ）完成
+
+---
+
+## Application Design - チーム代表（高木皇佑）による最終承認
+**Timestamp**: 2026-05-02T21:10:00+09:00
+**User Input**: "承認！"
+**AI Response**: "Application Design ステージのチーム代表最終承認を確認。本セッション内の確定事項:\n\n**設計入力（C-1〜C-8 + Follow-up）**:\n- C-1/C-2 = Z（moot, 単一 Agent 統合）\n- C-3 = C（REST + WebSocket、C-3a で訂正）\n- C-4 = C（EventBridge cron + デモボタン併用）\n- C-5 = A（WebSocket push、α 案維持で Polly + S3 audio-reports）\n- C-6 = A（オンデマンド集計）\n- C-7 = A（SPA on S3+CloudFront）\n- C-8 = B + C-8a = C + C-8b スコープ縮減（Slack 1 チャネルのみ + コード const ホワイトリスト + DRY_RUN）\n- C-5a = α 維持（音声出力維持、Speech-to-Speech は park）\n\n**命名（3 単語セット）**:\n- 自我モード（ego）→ 傀儡度（PuppetLevel）→ シンギュラリティモード（singularity）\n- Phase 概念撤廃の徹底（過去のオリジナル質問文を除く）\n\n**コアタグライン**:\n「自我のあるうちは決めねばならぬ。3 回で自我は溶け、シンギュラリティに至る。」\n→ application-design.md / components.md §2.1 / TODO.md / プロジェクトメモリの 4 箇所に刻印\n\n**成果物（5 ファイル + plan の Follow-up + TODO 系）**:\n- `aidlc-docs/inception/application-design/components.md`\n- `aidlc-docs/inception/application-design/component-methods.md`\n- `aidlc-docs/inception/application-design/services.md`\n- `aidlc-docs/inception/application-design/component-dependency.md`\n- `aidlc-docs/inception/application-design/application-design.md`\n- `aidlc-docs/inception/plans/application-design-plan.md` Follow-up Resolution\n- `aidlc-docs/construction/TODO_construction.md`（park 項目 3 件追加）\n- `TODO.md`（プロジェクトルート、提出前タスク用、user 書き直し版）\n\n**state 更新**:\n- `aidlc-docs/aidlc-state.md` の Current Stage を 'Application Design (approved 2026-05-02) → Units Generation (next)' に更新\n- Application Design に [x] completed マーク\n- Product Concept を新命名（自我/シンギュラリティ 2 モード化）に更新\n- Core Tagline をプロジェクト情報に追加\n\n次ステージ: **Units Generation**（実行可、または書類審査タスク=README リファクタを先行する選択も可）。"
+**Context**: Application Design ステージ完了、Units Generation への移行点
+
+---

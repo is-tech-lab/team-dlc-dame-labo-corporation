@@ -76,3 +76,58 @@ Construction フェーズの **Application Design** または **Functional Desig
 
 - 2026-04-30: 初版作成。Nix flake 項目を park（チーム代表 高木氏起点の議論）
 - 2026-05-02: エージェント構成の再分離検討を park（Discovery Mock チームレビュー後の 1 Agent 統合決定を受けて）
+
+---
+
+## 外部メッセージング送信チャネルの拡張（LINE / メール）
+
+**項目**: 外部メッセージング送信を Slack 以外（LINE Messaging API / SES）にも対応させる。
+
+**MVP の状態**: Slack の 1 チャネルのみで実装。`requirements.md` / 事前議論では LINE / メールも想定されていたが、Application Design Follow-up C-8b（2026-05-02）で MVP スコープから除外。
+
+**なぜ park**:
+- LINE Messaging API は bot アカウント申請が必要で書類審査 5/10 締切までに間に合わないリスク
+- SES (AWS Simple Email Service) は domain verification + sandbox 解除が必要、これも事前準備に時間がかかる
+- Slack の専用 workspace + ホワイトリスト + DRY_RUN モードで MVP のデモシナリオは完結する
+- 1 チャネルに絞った方が C-8a の安全境界（const ホワイトリスト）が明快、Functional Design もシンプル
+
+**いつ判断**:
+予選（5/30）または決勝（6/26）に向けた拡張時点で再評価。事前準備期間を逆算し、決勝までに LINE bot 申請 / SES domain verification を進める判断ポイントを設ける。
+
+**開かれた質問**:
+- LINE は LINE Notify と LINE Messaging API どちらを使うか（前者の方が手続き軽い）
+- SES の代替として SendGrid 等の外部 SaaS も視野に入れるか
+- 各チャネルでホワイトリスト + DRY_RUN を再実装するのか、共通インタフェース層を設けるのか
+
+**参考**:
+- 関連ドキュメント: `aidlc-docs/inception/plans/application-design-plan.md` Follow-up C-8b、`aidlc-docs/inception/application-design/components.md` §2.7
+
+---
+
+## Speech-to-Speech（音声入力 → 音声出力の双方向）
+
+**項目**: ユーザーが声で操作（音声入力）できるようにする → Speech-to-Text → Bedrock → Polly の双方向音声 UX。
+
+**MVP の状態**: 音声出力（AI → user）のみ実装、音声入力（user → AI）は対象外。Application Design Follow-up C-5a（2026-05-02）で park 決定。
+
+**なぜ park**:
+- **世界観との衝突**: Phase 4 / Autonomous モードでは「ユーザーは何もしない、聞き流す」が本質。能動的に声で応答することは『傀儡化』『決めない快楽』テーマと矛盾する
+- **スコープ超過**: Transcribe / Lex / Nova Sonic 等の音声入力コンポーネント追加で書類審査までの実装範囲を大幅に超える
+- **設計影響**: 音声入力を導入すると、音声で選択した内容を構造化選択（4 提案のうちどれか）に変換するロジック、マイク権限制御、エコーキャンセル等の追加考慮が必要
+
+**いつ判断**:
+予選通過後、決勝に向けた拡張機能として再評価。または「ユーザーが Phase 4 突入後に一言フィードバック（『あ、それは違うわ』）する」という限定的な音声入力 UX を切り出す可能性がある。
+
+**開かれた質問**:
+- 完全な双方向音声会話を目指すのか、限定的なフィードバック入力に留めるのか
+- AWS Nova Sonic（Speech-to-Speech モデル）が利用可能になっているか、Construction 開始時点で確認
+- 世界観（傀儡化）と双方向音声の整合性をどう取るか（声で文句言うのは『ダメになっていない』のでは？）
+
+**参考**:
+- 関連ドキュメント: `aidlc-docs/inception/plans/application-design-plan.md` Follow-up C-5a、`requirements.md` 事前議論の「イヤホンから『やっといたよ』」の世界観記述
+
+---
+
+## 履歴（追記）
+
+- 2026-05-02 夜: 外部チャネル拡張（LINE/SES）と Speech-to-Speech を park（Application Design Follow-up C-8b / C-5a を受けて）

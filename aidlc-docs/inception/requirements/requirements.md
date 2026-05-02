@@ -3,7 +3,7 @@
 **プロダクト名（仮）**: ダメ・ラボ・コーポレーション 提供サービス（後日命名予定）
 **作成日**: 2026-04-29
 **フェーズ**: INCEPTION - Requirements Analysis
-**入力**: `team-pre-discussion.md`, `requirement-verification-questions.md`（チーム回答済み）, ハッカソン要項（README.md）
+**入力**: `team-pre-discussion.md`, `requirement-verification-questions.md`（チーム回答済み）, ハッカソン要項（`HACKATHON.md`、当初は `README.md` に記載していたが 2026-05-02 に大会概要を `HACKATHON.md` へ退避し `README.md` はアプリケーション説明に書き直した）
 
 ---
 

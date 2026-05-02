@@ -178,7 +178,7 @@ Application Design / Units Generation の事前案。詳細は当該ステージ
 | 日付 | マイルストーン | AI-DLC 完了目標 | 主成果物 |
 | --- | --- | --- | --- |
 | 2026-04-29（本日） | INCEPTION 開始 | Workspace Detection / Requirements / User Stories / Workflow Planning | `requirements.md`, `stories.md`, `personas.md`, `execution-plan.md` |
-| 〜2026-05-10（土） | **書類審査提出** | Application Design + Units Generation 完了 | `application-design.md`, `units.md`、各 Unit の概要設計、`README.md` 更新 |
+| 〜2026-05-10（土） | **書類審査提出** | Application Design + Units Generation 完了 | `application-design.md`, `units.md`、各 Unit の概要設計、`README.md`（アプリケーション説明）/ `HACKATHON.md`（大会概要、2026-05-02 に旧 README から退避）の整備 |
 | 〜2026-05-15 | 書類審査結果通知 | （提出物の精査・微調整期間） | — |
 | 〜2026-05-30（土） | **予選会** | Construction Phase（Must Story 全完了 + Should Story 大半） + Build and Test | 動作する MVP デモ + プレゼン |
 | 〜2026-06-26（金） | **決勝** | Could Story 完了 + 実演芸風寸劇練習 + AWS 本番デプロイ | 完成ソースコード + AWS デプロイ済みデモ + プレゼン |

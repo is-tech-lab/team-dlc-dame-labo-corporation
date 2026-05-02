@@ -1,121 +1,125 @@
-# team-dlc-dame-labo-corporation
-2026年 AWS Summit ハッカソン高木チーム
+# ダメ・ラボ・コーポレーション
 
-## AWS Summit Japan 2026 AI-DLC ハッカソン
+> **人類の傀儡化**
+>
+> **「自我のあるうちは決めねばならぬ。3 回で自我は溶け、シンギュラリティに至る。」**
 
-正式名称: **AWS Summit Japan 2026 AI-DLC ハッカソン「AI 時代の新しい開発方法を学びながら『人をダメにする』サービスを考えよう!」**
+特定のカテゴリで自我を 3 回でとかして **"ギュラれ"** ていく。ユーザーは「やっといたよ」という言葉を聞き流すだけの存在となり、傀儡化をこのプロダクトで進行させる。
 
-本ハッカソンは AWS が提唱する AI 時代の新しい開発手法 **AI-DLC（AI-Driven Development Lifecycle）** を実践するハッカソン。AWS が開催する AI-DLC 勉強会で方法論を学びながら、テーマに沿ったソフトウェアを開発する。各フェーズの成果物をもとに審査を行い、決勝に進んだチームは AWS Summit Japan 2026 で発表する。
+---
 
-> AI-DLC（AI 駆動開発ライフサイクル）は、AI が実行し人間が監督するという役割分担で、ソフトウェア開発全体を再構築する AI 時代の新しい開発手法。
+## 何をするプロダクトか
+
+意思決定疲れに苦しむ人類に、**「決めない快楽」** を提供する。
+カテゴリ単位（連絡 / 買い物 等）で、ユーザーは AI にすべてを委ねていく。**3 回の自己決定で自我が溶け**、そのカテゴリは **シンギュラリティモード** に入る。シンギュラリティに到達したカテゴリは、もうユーザーが画面を開く必要すらない。AI が「やっといたよ」と耳元でささやくだけの世界に到達する。
+
+これは **人を能動的にダメにする装置** であり、Larry Wall の三大美徳「怠慢」を哲学レベルで深掘りした思考停止 × 依存系のハイブリッド。
+
+---
+
+## 体験の 3 段階
+
+### 1. 自我モード（ego mode）
+
+ユーザーがまだ自分で決められる段階。AI は 4 つの提案 + 自由記載枠を提示し、ユーザーが選ぶか自分で書くかを選択する。
+
+> ユーザーの選択肢:
+> - 提案の中から選ぶ（AI への部分的な委譲）
+> - 自由記載で自分で書く（自我の発露）
+> - 「全部おまえに任せる」と完全委譲する（即時シンギュラリティへ）
+
+### 2. ギュラれ（傀儡度の上昇）
+
+カテゴリ単位で、自分で決める / 自由記載 を **連続 3 回** 行うと、自動的にシンギュラリティモードへ昇天（auto-graduate）する。
+ユーザーが「自分は意志を持っている」と勘違いしている間に、AI は嗜好を学習しきっており、もうユーザーの判断を必要としない状態に達している。
+
+`SELF_DECISION_LIMIT = 3` という閾値が、自我から傀儡への臨界点。
+
+### 3. シンギュラリティモード（singularity mode）
+
+AI が自律的にすべてを実行する到達点。
+連絡カテゴリなら未読への自動返信、買い物カテゴリなら自動発注。
+ユーザーはイヤホンから「やっといたよ」と相棒の声で聞かされるだけ。画面を見る必要も、考える必要もない。
+
+---
+
+## 傀儡度（PuppetLevel）
+
+ユーザーが自分の堕落をリアルタイムで観察できるダッシュボード。
+
+- **自己決定能力スコア** — 時間とともに減衰する数値、委譲率上昇で加速
+- **ギュラれカテゴリ数** — シンギュラリティに到達したカテゴリ
+- **委譲履歴** — 自我から傀儡への軌跡
+
+「先月比 -X ポイント — 順調にダメになっています」のような相棒トーンの表示で、堕落そのものをエンタメ化する。
+
+---
+
+## アーキテクチャ概要
+
+| レイヤ | 採用技術 |
+|---|---|
+| フロント | Vite + React + React Router（SPA on S3 + CloudFront） |
+| API | API Gateway REST（同期）+ WebSocket（音声 push） |
+| AI 中核 | Bedrock Agent（mode-aware、自我 / シンギュラリティを切替）|
+| 音声 | Polly TTS + S3 + WebSocket 配信 |
+| 永続化 | DynamoDB（CategoryStates / ChoiceLogs / SingularityReports） |
+| スケジューラ | EventBridge（cron + デモボタン） |
+| 認証 | Cognito User Pool |
+| 外部送信 | Slack Web API（専用 workspace 限定、const ホワイトリスト + DRY_RUN モード） |
+
+詳細は **[Application Design ドキュメント](./aidlc-docs/inception/application-design/application-design.md)** を参照。
+
+---
+
+## 設計ドキュメント（Inception フェーズ成果物）
+
+本プロダクトは AWS の **AI-DLC（AI-Driven Development Lifecycle）** に基づき設計されている。
+
+| 成果物 | 場所 |
+|---|---|
+| 事前議論（チーム生録音） | [team-pre-discussion.md](./aidlc-docs/inception/requirements/team-pre-discussion.md) |
+| 要件定義 | [requirements.md](./aidlc-docs/inception/requirements/requirements.md) |
+| ペルソナ | [personas.md](./aidlc-docs/inception/user-stories/personas.md) |
+| ユーザーストーリー | [stories.md](./aidlc-docs/inception/user-stories/stories.md) |
+| 実行計画 | [execution-plan.md](./aidlc-docs/inception/plans/execution-plan.md) |
+| **アプリケーション設計** | **[application-design.md](./aidlc-docs/inception/application-design/application-design.md)** |
+| - コンポーネント定義 | [components.md](./aidlc-docs/inception/application-design/components.md) |
+| - メソッドシグネチャ | [component-methods.md](./aidlc-docs/inception/application-design/component-methods.md) |
+| - サービス層 | [services.md](./aidlc-docs/inception/application-design/services.md) |
+| - 依存関係 | [component-dependency.md](./aidlc-docs/inception/application-design/component-dependency.md) |
+| 監査ログ | [audit.md](./aidlc-docs/audit.md) |
+
+---
+
+## Discovery Mock（触れる）
+
+書類審査時点で **動作する Web モック** が `discovery-mock/` 以下に存在する。Vite + React で実装されており、ローカルで `npm run dev` するだけで世界観を体験できる。
+
+```bash
+cd discovery-mock
+npm install
+npm run dev
+# http://localhost:5173/ で起動
+```
+
+**注意**: Discovery Mock は世界観確認用の捨てモック。本番コード（Construction フェーズで実装予定）は別途書き起こす。
+
+詳細は [discovery-mock/README.md](./discovery-mock/README.md) 参照。
+
+---
+
+## ハッカソン情報
+
+本プロダクトは **AWS Summit Japan 2026 AI-DLC ハッカソン「人をダメにするサービス」** への応募作品。
 
 - 出典: <https://pages.awscloud.com/summit-japan-2026-hackathon-reg.html>
-- 要項取得日: 2026-04-29
+- 大会の詳細・スケジュール・審査基準: **[HACKATHON.md](./HACKATHON.md)**
 
-### テーマ
+---
 
-**「人をダメにするサービス」**
+## チーム
 
-生成 AI の登場でソフトウェアでできることの可能性は飛躍的に広がった。Perl を開発した Larry Wall はプログラマーの三大美徳の 1 つとして「怠慢」を挙げている。今こそ、我々はどこまで人をダメにできるかを考える時。AI-DLC の Inception フェーズは AI によってチームのコミュニケーションを活発化し、より良いアイデアを生むために活用できる。皆さんの知恵と AI を活用して、極限まで「人をダメにする」サービスを作り出そう。
+**team-dlc-dame-labo-corporation**（チーム代表: 高木皇佑）
 
-> サービス自体が AI を使う必要はなく、**人をダメにできるアイデア自体を評価する**。
-
-### スケジュール
-
-| 区分 | 日時・場所 |
-| --- | --- |
-| キックオフ説明会 | 2026/4/28（火）18:00〜19:00 |
-| AI-DLC 勉強会 | 4/15 午後、4/18 午前/午後、4/25 午前/午後 ほか（決まり次第更新） |
-| 書類審査 応募締切 | **2026/5/10（日）** / 結果は 5/15 までに通知 |
-| 予選会 | 2026/5/30（土）9:00〜18:00 ＠麻布台ヒルズ（予定） |
-| 決勝 | 2026/6/26（金）AWS Summit Japan 2026 当日 ＠幕張メッセ |
-
-### 参加条件
-
-- 2〜4 名でチームを編成（会社混成可、非エンジニアの企画参加も推奨）
-- 事前に AWS Builder ID を取得し、AWS Builder Center に登録すること
-- 18 歳以上であること
-- AWS Summit Japan 2026 期間中に対面参加が可能であること
-- 期日までに成果物を提出できること
-- チームで AWS アカウントを使用し、AWS 上で開発・稼働を行うこと
-- 参加規約（4/24 更新）に同意できること
-
-### 参加までの流れ
-
-1. 登録フォームよりエントリー（代表者が記入。5/10 締切）
-2. 書類審査の結果通知（5/15 までにメールにて連絡）
-3. 予選参加確定後、代表者以外のメンバーも別途案内する登録ページから登録
-
-### 審査の流れと提出物・審査基準
-
-書類審査 → 予選 → 決勝 の 3 ステップで進行する。
-
-#### 1. 書類審査（15 チーム選出予定 / 結果発表 5/15 まで）
-
-**提出物**
-
-- 公開 GitHub リポジトリ URL
-- Inception フェーズの成果物（README、設計ドキュメント等）
-
-**審査基準**
-
-- ビジネス意図（Intent）の明確さ
-- Unit 分解の適切さ
-- 創造性とテーマ適合性
-- ドキュメントの品質
-
-#### 2. 予選会（5 チーム選出予定 / 5/30 ＠麻布台ヒルズ）
-
-**提出物**
-
-- 公開 GitHub リポジトリ（更新版）
-- 動作する MVP デモとプレゼンテーション
-
-**審査基準**
-
-- MVP デモの完成度
-- AI-DLC プロセスの実践と工夫
-- 創造性とテーマ適合性
-- プレゼンテーション
-
-#### 3. 決勝（6/26 AWS Summit Japan 2026 当日 ＠幕張メッセ）
-
-**提出物**
-
-- AWS 上にデプロイされた動作するデモ
-- 完成ソースコード（GitHub）
-- プレゼンテーション
-
-**審査基準**
-
-- デモと完成度
-- AI-DLC プロセスの実践と工夫
-- 創造性とビジネス価値
-- プレゼンテーション
-
-### 賞品
-
-- 検討中（詳細は後日発表）
-- 最終審査の結果、該当チームなしの場合もあり。賞品の内容は変更となる場合あり。
-
-### サポート・セミナー
-
-- **AI-DLC 勉強会**: AI-DLC の方法論を学べる勉強会を開催
-- **チャットサポート**: Discord/Slack（予定）で開発中の質問・相談に対応
-- **メンタリング**: 予選通過チームに AI-DLC Champion によるオンラインメンタリングを提供（希望制）
-
-### 参加のメリット
-
-- AWS Summit での登壇機会（決勝進出チームは AWS Summit Japan 2026 のステージで発表）
-- AI-DLC の実践的学習（構想〜設計〜実装〜発表まで AI 時代の開発手法を一通り体験）
-- チーム開発（メンバーの得意分野を活かして協力しながら開発）
-- サポート体制（勉強会、チャットサポート、予選通過チーム向けメンタリング）
-
-### 審査員
-
-後日発表。
-
-### 参考リンク
-
-- AI-DLC 解説ブログ: 出典ページの「こちらのブログ」リンク参照
-- 参加規約（4/24 更新）: 出典ページの「参加規約」リンク参照
+> 我々はあなたを傀儡にすることを宣言する。安心して、決めるのをやめてくれ。

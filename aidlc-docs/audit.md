@@ -454,3 +454,19 @@ ISO 8601 形式（JST, +09:00）でタイムスタンプを記録する。
 **Context**: Application Design ステージ完了、Units Generation への移行点
 
 ---
+
+## README リファクタ — 大会概要 → アプリケーション README
+**Timestamp**: 2026-05-02T21:30:00+09:00
+**User Input**: "今commitして！\n\n次はREADMEで「人類の傀儡化\n・自我のあるうちは決めねばならぬ。3 回で自我は溶け、シンギュラリティに至る\n\n特定のカテゴリで自我を３回でとかして\"ギュラれ\"ていく。ユーザーは「やっといたよ」という言葉を聞き流すだけの存在へとなり、傀儡化をこのプロダクトで進行させる。」これをベースに作ってほしい"
+**AI Response**: "1. Application Design 完了状態を commit (`66efb0b` Complete Application Design with ego/singularity/PuppetLevel naming) — 10 ファイル、+1446 / -17。\n2. `git mv README.md HACKATHON.md` で大会概要を退避（履歴温存のため git mv 採用）。\n3. user 提供の hero copy をベースに新 README.md を作成。構成:\n   - Hero（タグライン + ギュラれ説明）\n   - 何をするプロダクトか\n   - 体験の 3 段階（自我モード / ギュラれ / シンギュラリティモード）\n   - 傀儡度（ダッシュボード）\n   - アーキテクチャ概要（表形式）\n   - 設計ドキュメント一覧（Application Design 5 ファイル + 上流リンク）\n   - Discovery Mock 触れる手順\n   - ハッカソン情報（HACKATHON.md へのリンク）\n   - チーム情報\n4. ブランド動詞「**ギュラれる**」をプロジェクトメモリに永続化（`project_brand_verb_gyurareru.md`）。シンギュラリティの語幹「ギュラ」を切り出した造語動詞、user 自身が hero copy で刻印、識別子レベルでは `singularity` で統一しつつ UI/マーケティング文言で使う方針を明文化。MEMORY.md インデックス更新。\n5. TODO.md の唯一タスク `[ ] README.mdをアプリケーションの説明に変更する` を `[x]` に更新（2026-05-02 完了マーク + 大会概要は HACKATHON.md に退避と注記）。\n\n**温存判断**:\n- `aidlc-docs/inception/requirements/requirements.md` 6 行目の `ハッカソン要項（README.md）` 参照は touch せず（チーム合作 .md のメタデータ箇所、protected .md ルールに従う）。HACKATHON.md は同階層に存在するので発見可能。\n- `aidlc-docs/inception/plans/execution-plan.md` 181 行目の `README.md 更新` 参照も touch せず（同様の保護理由）。"
+**Context**: 書類審査の最重要タスク（README をアプリケーション説明に切替）完了、HACKATHON.md と README.md の責務分離
+
+---
+
+## 歴史補正 — 上流ドキュメントの README.md 参照を HACKATHON.md に書き換え
+**Timestamp**: 2026-05-02T21:40:00+09:00
+**User Input**: "REAMDEが間違っていたので直したい" → "歴史を直したい"
+**AI Response**: "user 明示指示により、protected .md の README.md 参照を HACKATHON.md ベースに書き換え。\n\n対象ファイル:\n1. `aidlc-docs/inception/requirements/requirements.md` 6 行目: `ハッカソン要項（README.md）` → `ハッカソン要項（HACKATHON.md、当初は README.md に記載していたが 2026-05-02 に大会概要を HACKATHON.md へ退避し README.md はアプリケーション説明に書き直した）` という形で history note を含めて書き換え\n2. `aidlc-docs/inception/plans/execution-plan.md` 181 行目: `README.md 更新` → `README.md（アプリケーション説明）/ HACKATHON.md（大会概要、2026-05-02 に旧 README から退避）の整備` に書き換え\n\n**温存判断**:\n- `discovery-mock-plan.md` 91/146 行目の README.md 参照は **`discovery-mock/README.md`**（モック内部の README）を指しており別物、touch しない\n- `audit.md` の過去エントリは append-only かつ chronological log として『その時点の事実を記録する』性質なので、過去『README.md にハッカソン要項を永続化』と書いた箇所は当時の事実通り温存\n- `team-pre-discussion.md` には README.md 参照なし、touch 不要\n\n**書き換えの方針**: 単純な置換ではなく、`HACKATHON.md（旧 README.md から退避）` のような history note を含めることで、後の閲覧者が経緯を追える形にした。append-only 戦略の精神を 1 行レベルでも維持。"
+**Context**: 上流ドキュメントの整合性向上、protected .md の例外的編集（user 明示指示下）
+
+---
